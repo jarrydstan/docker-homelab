@@ -4,7 +4,7 @@ services:
     image: adguard/adguardhome
     container_name: adguardhome
     networks:
-      - traefiknet
+      - traefik_traefiknet
     ports:
       - 53:53/tcp
       - 53:53/udp
@@ -35,5 +35,5 @@ services:
       # - "traefik.tcp.routers.adguard-udp.
     restart: unless-stopped
 networks:
-  traefiknet:
+  traefik_traefiknet:
     external: true
