@@ -34,4 +34,6 @@ services:
       # - "traefik.tcp.routers.adguard-udp.
       # - "traefik.tcp.routers.adguard-udp.
     restart: unless-stopped
-
+networks:
+  traefiknet:
+    external: true
