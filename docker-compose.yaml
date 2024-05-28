@@ -5,12 +5,12 @@ services:
     container_name: adguardhome
     networks:
       - traefik_traefiknet
-    ports:
-      - 53:53/tcp
-      - 53:53/udp
-      - 784:784/udp
-      - 853:853/tcp
-      - 853:853/udp
+    # ports:
+    #   - 53:53/tcp
+    #   - 53:53/udp
+    #   - 784:784/udp
+    #   - 853:853/tcp
+    #   - 853:853/udp
       # - 3000:3000/tcp
       # - 9080:80/tcp
     volumes:
@@ -18,7 +18,7 @@ services:
       - /tank/docker/adguard/config:/opt/adguardhome/conf
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`) || Host(`adguard.$DOMAINNAME_J`)"
+      - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`)"
       - "traefik.http.routers.adguard-https.entrypoints=websecure"
       - "traefik.http.routers.adguard-https.tls=true"
       - "traefik.http.routers.adguard-https.tls.certresolver=letsencrypt"     
