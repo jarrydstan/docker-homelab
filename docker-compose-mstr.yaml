@@ -21,4 +21,5 @@ include:
   - compose/$HOSTNAME/portainer.yaml
   - compose/$HOSTNAME/dozzle.yaml
   - compose/$HOSTNAME/homepage.yaml
+  - compose/$HOSTNAME/adguard.yaml
   # MEDIA
