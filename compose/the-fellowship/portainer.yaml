@@ -1,0 +1,20 @@
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    depends_on:
+      socket-proxy:
+        condition: service_started
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    networks:
+      - socket_proxy
+    command: -H tcp://socket-proxy:2375
+    ports:
+      - 9000:9000
+    volumes:
+      # - /var/run/docker.sock:/var/run/docker.sock
+      - $DOCKERDIR/appdata/portainer/data:/data
+    environment:
+      - TZ=$TZ

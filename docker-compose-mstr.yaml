@@ -1,0 +1,24 @@
+name: homelab
+networks:
+  traefik_traefiknet:
+    external: true
+  backend:
+    name: backend
+    driver: bridge
+  frontend:
+    name: frontend
+    driver: bridge
+  socket_proxy:
+    name: socket_proxy
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.11.0/24
+
+include:
+  # CORE
+  - compose/$HOSTNAME/socket-proxy.yaml
+  - compose/$HOSTNAME/portainer.yaml
+  - compose/$HOSTNAME/dozzle.yaml
+  - compose/$HOSTNAME/homepage.yaml
+  # MEDIA

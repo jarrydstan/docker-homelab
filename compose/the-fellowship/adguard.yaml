@@ -1,4 +1,3 @@
-name: homelab
 services:
   adguardhome:
     image: adguard/adguardhome
@@ -34,6 +33,3 @@ services:
       # - "traefik.tcp.routers.adguard-udp.
       # - "traefik.tcp.routers.adguard-udp.
     restart: unless-stopped
-networks:
-  traefik_traefiknet:
-    external: true
