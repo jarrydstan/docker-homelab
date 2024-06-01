@@ -5,15 +5,31 @@ networks:
   backend:
     name: backend
     driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.13.0/24
   frontend:
     name: frontend
     driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.12.0/24
   socket_proxy:
     name: socket_proxy
     driver: bridge
     ipam:
       config:
         - subnet: 192.168.11.0/24
+
+secrets:
+  cf_dns_api_tokens:
+    file: $DOCKERDIR/.secrets/cf_dns_api_tokens
+  pgsql_root_password:
+    file: $DOCKERDIR/.secrets/pgsql_root_password
+  proton_vpn_pass:
+    file: $DOCKERDIR/.secrets/proton_vpn_pass
+  proton_vpn_user:
+    file: $DOCKERDIR/.secrets/proton_vpn_user
 
 include:
   # CORE
@@ -22,4 +38,13 @@ include:
   - compose/$HOSTNAME/dozzle.yaml
   - compose/$HOSTNAME/homepage.yaml
   - compose/$HOSTNAME/adguard.yaml
+  - compose/$HOSTNAME/proxy.yaml
   # MEDIA
+  # DOWNLOADERS
+  - compose/$HOSTNAME/sabnzbd.yaml
+  # PVRS
+  # MONITORING
+  # MAINTENANCE
+  - compose/$HOSTNAME/docker-gc.yaml
+  # NETWORK
+  - compose/$HOSTNAME/gluetun.yaml

@@ -17,12 +17,12 @@ services:
       - $DOCKERDIR/appdata/adguard/config:/opt/adguardhome/conf
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`)"
-      - "traefik.http.routers.adguard-https.entrypoints=websecure"
+      - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`) || Host(`adguard.$DOMAINNAME_J`)"
       - "traefik.http.routers.adguard-https.tls=true"
-      - "traefik.http.routers.adguard-https.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.adguard-https.service=adguard-svc"
-      - "traefik.http.services.adguard-svc.loadBalancer.server.port=443"
+      - "traefik.http.routers.adguard-https.tls.certResolver=production"
+      - "traefik.http.routers.adguard-https.entrypoints=websecure"
+      - "traefik.http.routers.adguard-https.service=adguard-dash-svc"
+      - "traefik.http.services.adguard-dash-svc.loadBalancer.server.port=10232"
       # - "traefik.http.routers.adguard-http"
       # - "traefik.http.routers.adguard-http"
       # - "traefik.http.routers.adguard-http"
