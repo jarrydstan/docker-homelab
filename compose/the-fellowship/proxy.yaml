@@ -2,13 +2,27 @@ services:
   traefik:
     image: traefik:v3.0
     networks:
-      - frontend
-      - socket_proxy
+      frontend:
+        ipv4_address: 192.168.12.254
+      socket_proxy:
+      traefik:
     ports:
-      - 8080:8080
-      - 80:80
-      - 443:443
+      # - 8080:8080
+      # - 80:80
+      # - 443:443
       # - 53:53
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 8080 # need to enable --api.insecure=true
+        published: 8085
+        protocol: tcp
+        mode: host
     container_name: traefik
     restart: always
     command:
@@ -23,12 +37,13 @@ services:
       - DOMAINNAME_J
     secrets:
       - cf_dns_api_tokens
+      - basic_auth_credentials
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock
       - $DOCKERDIR/appdata/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
-      - $DOCKERDIR/appdata/traefik/letsencrypt:/letsencrypt
+      - $DOCKERDIR/appdata/traefik/letsencrypt/acme-prod.json:/letsencrypt/acme-prod.json
       - $DOCKERDIR/appdata/traefik/rules:/rules:ro
-      - $DOCKERDIR/logs/traefik.log:/log/traefik.log
+      - $DOCKERDIR/logs:/log
     labels:
       #- "autoheal=true"
       - "traefik.enable=true"
@@ -42,7 +57,7 @@ services:
       # - "traefik.http.routers.ping.tls=true"
       - "traefik.http.routers.ping.service=ping@internal"
       # Middlewares
-      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      # - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # For No Authentication
       #- "traefik.http.routers.traefik-rtr.middlewares=chain-basic-auth@file" # For Basic HTTP Authentication
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # For Google OAuth
