@@ -1,0 +1,21 @@
+services:
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    network:
+      - frontend
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=$TZ
+      - JELLYFIN_TYPE=emby
+    # ports:
+    #   - 5055:5055
+    volumes:
+      - $DOCKERDIR/appdata/jellyseer/config:/app/config
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.router.jellyseer-rtr.entrypoints=websecure"
+      - "traefik.http.router.jellyseer-rtr.rule=Host(`request.local.nordicussie.com`)"
+      - "traefik.http.router.jellyseer-rtr.service=jellyseer-svc"
+      - "traefik.http.services.jellyseer-svc.server.port=5055"

@@ -10,11 +10,14 @@ services:
     networks:
       frontend:
         ipv4_address: 192.168.12.230
+      backend:
+        ipv4_address: 192.168.13.230
     # ports:
     # - "8084:443"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - $DOCKERDIR/appdata/sabnzbd:/config
-      - $DATADIR/downloads:/data/downloads
+      - $DATADIR/usenet/:/data/usenet
     environment:
       PUID: $PUID
       PGID: $PGID
@@ -22,19 +25,20 @@ services:
       UMASK_SET: 002
     labels:
       - "traefik.enable=true"
-    #  HTTP Routers Auth Bypass
-    #   - "traefik.http.routers.sabnzbd-rtr-bypass.entrypoints=web"
-    #   - "traefik.http.routers.sabnzbd-rtr-bypass.rule=Host(`sabnzbd.local.$DOMAINNAME_NA`) && Query(`apikey`, `$SABNZBD_API_KEY`)"
-    #  - "traefik.http.routers.sabnzbd-rtr-bypass.rule=Host(`sabnzbd.$DOMAINNAME_NA`) && Header(`traefik-auth-bypass-key`, `$TRAEFIK_AUTH_BYPASS_KEY`)" # Bypass Auth for LunaSea on iOS
-    #   - "traefik.http.routers.sabnzbd-rtr-bypass.priority=100"
-    #  - "traefik.http.routers.sabnzbd-rtr-bypass.service=sabnzbd-svc"
-    #  HTTP Routers Auth
-    #   - "traefik.http.routers.sabnzbd-rtr.entrypoints=websecure"
-    #   - "traefik.http.routers.sabnzbd-rtr.rule=Host(`sabnzbd.local.$DOMAINNAME_NA`)"
-    #   - "traefik.http.routers.sabnzbd-rtr.priority=99"
-    #   - "traefik.http.routers.sabnzbd-rtr.tls=true"
-    #   - "traefik.http.routers.sabnzbd-rtr.tls.certResolver=production"
-    #   - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
+      #  HTTP Routers Auth Bypass
+      #   - "traefik.http.routers.sabnzbd-rtr-bypass.entrypoints=web"
+      #   - "traefik.http.routers.sabnzbd-rtr-bypass.rule=Host(`sabnzbd.local.$DOMAINNAME_NA`) && Query(`apikey`, `$SABNZBD_API_KEY`)"
+      #  - "traefik.http.routers.sabnzbd-rtr-bypass.rule=Host(`sabnzbd.$DOMAINNAME_NA`) && Header(`traefik-auth-bypass-key`, `$TRAEFIK_AUTH_BYPASS_KEY`)" # Bypass Auth for LunaSea on iOS
+      #   - "traefik.http.routers.sabnzbd-rtr-bypass.priority=100"
+      #  - "traefik.http.routers.sabnzbd-rtr-bypass.service=sabnzbd-svc"
+      #  HTTP Routers Auth
+      # - "traefik.http.routers.sabnzbd-rtr.entrypoints=websecure"
+      # - "traefik.http.routers.sabnzbd-rtr.rule=Host(`sabnzbd.local.$DOMAINNAME_NA`)"
+      # - "traefik.http.routers.sabnzbd-rtr.priority=99"
+      # - "traefik.http.routers.sabnzbd-rtr.tls=true"
+      # - "traefik.http.routers.sabnzbd-rtr.tls.certResolver=production"
+      # - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
+      # - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
     #   Middlewares
     #   - "traefik.http.middlewares.chain-no-auth.chain.middlewares="
     #   - "traefik.http.middlewares.chain-oauth.chain.middleares="
