@@ -1,0 +1,30 @@
+services:
+  # prowlarr - Index management
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    security_opt:
+      - no-new-privileges:true
+    restart: "unless-stopped"
+    # profiles: ["media", "arrs", "all"]
+    networks:
+      frontend:
+        ipv4_address: 192.168.12.233
+      backend:
+        ipv4_address: 192.168.13.233
+    # ports:
+    # - "192.168.12.231:9696:9696"s
+    volumes:
+      - $DOCKERDIR/appdata/prowlarr/config:/config
+      - $DATADIR:/data
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr-rtr.rule=Host(`prowlarr.local.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
+      - "traefik.http.services.prowlarr-svc.loadBalancer.server.port=9696"
