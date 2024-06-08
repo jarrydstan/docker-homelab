@@ -44,7 +44,12 @@ include:
   # MEDIA
   # DOWNLOADERS
   - compose/$HOSTNAME/sabnzbd.yaml
+  - compose/$HOSTNAME/qbittorrent.yaml
   # PVRS
+  - compose/$HOSTNAME/radarr.yaml
+  - compose/$HOSTNAME/sonarr.yaml
+  - compose/$HOSTNAME/prowlarr.yaml
+  - compose/$HOSTNAME/jellyseer.yaml
   # MONITORING
   # MAINTENANCE
   - compose/$HOSTNAME/docker-gc.yaml
