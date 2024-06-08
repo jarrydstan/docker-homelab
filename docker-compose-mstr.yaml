@@ -1,7 +1,11 @@
 name: homelab
 networks:
-  traefik_traefiknet:
-    external: true
+  traefik:
+    name: traefik
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: fe81::/112
   backend:
     name: backend
     driver: bridge
@@ -26,10 +30,8 @@ secrets:
     file: $DOCKERDIR/.secrets/cf_dns_api_tokens
   pgsql_root_password:
     file: $DOCKERDIR/.secrets/pgsql_root_password
-  proton_vpn_pass:
-    file: $DOCKERDIR/.secrets/proton_vpn_pass
-  proton_vpn_user:
-    file: $DOCKERDIR/.secrets/proton_vpn_user
+  basic_auth_credentials:
+    file: $DOCKERDIR/.secrets/basic_auth_credentials
 
 include:
   # CORE
@@ -48,3 +50,5 @@ include:
   - compose/$HOSTNAME/docker-gc.yaml
   # NETWORK
   - compose/$HOSTNAME/gluetun.yaml
+  # WEB
+  - compose/$HOSTNAME/webapp.yaml

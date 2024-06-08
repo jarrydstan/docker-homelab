@@ -1,0 +1,19 @@
+services:
+  webapp:
+    container_name: webapp
+    build:
+      context: $DOCKERDIR/appdata/www/web/prod/
+      dockerfile: prod.Dockerfile
+      args:
+        ENV_VARIABLE: ${ENV_VARIABLE}
+        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    restart: always
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webapp-rtr.entrypoints=websecure"
+      - "traefik.http.routers.webapp-rtr.rule=Host(`www.$DOMAINNAME_NA`) || Host(`www.$DOMAINNAME_J`)"
+      - "traefik.http.routers.webapp-rtr.service=webapp-svc"
+      - "traefik.http.services.webapp-svc.loadBalancer.server.port=3000"
+  # Add more containers below (nginx, postgres, etc.)
