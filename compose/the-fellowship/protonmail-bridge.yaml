@@ -1,0 +1,12 @@
+services:
+  protonmail-bridge:
+    image: shenxn/protonmail-bridge:latest
+    container_name: protonmail-bridge
+    restart: unless-stopped
+    network:
+      - frontend
+    ports:
+      - "1025:25"
+      - "1143:143"
+    volumes:
+      - $DOCKERDIR/appdata/protonmail:/root

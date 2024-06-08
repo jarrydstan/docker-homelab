@@ -5,7 +5,6 @@ services:
       frontend:
         ipv4_address: 192.168.12.254
       socket_proxy:
-      traefik:
     ports:
       # - 8080:8080
       # - 80:80
@@ -49,11 +48,13 @@ services:
       - "traefik.enable=true"
       # HTTP Routers
       - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
-      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.local.$DOMAINNAME_NA`) || Host(`traefik.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.traefik-rtr2.entrypoints=web"
+      - "traefik.http.routers.traefik-rtr2.rule=Host(`traefik.local.$DOMAINNAME_NA`) || Host(`traefik.$DOMAINNAME_NA`)"
       # Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       # Healthcheck/ping
-      - "traefik.http.routers.ping.rule=Host(`traefik.$DOMAINNAME_NA`) && Path(`/ping`)"
+      - "traefik.http.routers.ping.rule=Host(`traefik.local.$DOMAINNAME_NA`) && Path(`/ping`)"
       # - "traefik.http.routers.ping.tls=true"
       - "traefik.http.routers.ping.service=ping@internal"
       # Middlewares
