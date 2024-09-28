@@ -1,8 +1,9 @@
 services:
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr:1.9.2
     container_name: jellyseerr
-    network:
+    dns: "192.168.12.120"
+    networks:
       - frontend
     environment:
       - LOG_LEVEL=debug
@@ -15,7 +16,8 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.router.jellyseer-rtr.entrypoints=websecure"
-      - "traefik.http.router.jellyseer-rtr.rule=Host(`request.local.nordicussie.com`)"
-      - "traefik.http.router.jellyseer-rtr.service=jellyseer-svc"
-      - "traefik.http.services.jellyseer-svc.server.port=5055"
+      - "traefik.http.routers.jellyseer-rtr.entrypoints=websecure"
+      - "traefik.http.routers.jellyseer-rtr.rule=Host(`request.local.$DOMAINNAME_NA`) || Host(`request.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.jellyseer-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.jellyseer-rtr.service=jellyseer-svc"
+      - "traefik.http.services.jellyseer-svc.loadBalancer.server.port=5055"

@@ -14,7 +14,7 @@ services:
     volumes:
       - $DOCKERDIR/appdata/gluetun:/tmp/gluetun
       - $DOCKERDIR/appdata/qbittorrent/config:/config
-      - $DATADIR/torrents:/data/torrents # Ensure that downloads folder is set to /data/downloads in qBittorrent
+      - $DATADIR/:/media # Ensure that downloads folder is set to /data/downloads in qBittorrent
       - $DOCKERDIR/appdata/qbittorrent/custom-services.d:/custom-services.d
     environment:
       TZ: $TZ

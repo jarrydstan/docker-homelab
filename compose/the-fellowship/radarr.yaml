@@ -13,10 +13,11 @@ services:
       backend:
         ipv4_address: 192.168.13.231
     # ports:
-    #   - "192.168.12.231:7878:7878"
+    # - "192.168.13.231:7878:7878"
     volumes:
       - $DOCKERDIR/appdata/radarr/config:/config
-      - $DATADIR:/data
+      - $DATADIR:/media
+      - /data/usenet/complete/movies
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ
@@ -25,6 +26,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr-rtr.entrypoints=websecure"
-      - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.local.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.local.$DOMAINNAME_NA`) || Host(`radarr.$DOMAINNAME_NA`)"
       - "traefik.http.routers.radarr-rtr.service=radarr-svc"
       - "traefik.http.services.radarr-svc.loadBalancer.server.port=7878"

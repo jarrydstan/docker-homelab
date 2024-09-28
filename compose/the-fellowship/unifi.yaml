@@ -3,18 +3,33 @@ services:
     image: ghcr.io/goofball222/unifi
     container_name: unifi
     restart: unless-stopped
-    network:
+    networks:
       - frontend
     ports:
       - 3478:3478/udp
-      - 8080:8080
-      - 8443:8443
-      - 8880:8880
-      - 8843:8843
+      - 8089:8080
+      - 6789:6789
+      # - 8443:8443
+      # - 8880:8880
+      # - 8843:8843
+      - 1001:1001/udp
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      # - ./cert:/usr/lib/unifi/cert
-      - ./data:/usr/lib/unifi/data
-      - ./logs:/usr/lib/unifi/logs
+      - $DOCKERDIR/.cert:/usr/lib/unifi/cert
+      # - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/fullchain.pem:/usr/lib/unifi/cert/cert.pem:ro
+      # - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/privkey.pem:/usr/lib/unifi/cert/privkey.pem:ro
+      - $DOCKERDIR/appdata/unifi:/usr/lib/unifi/data
+      - $DOCKERDIR/logs/unifi:/usr/lib/unifi/logs
     environment:
       - TZ=$TZ
+      - PGID=$PGID
+      - PUID=$PUID
+      - RUN_CHOWN=false
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.unifico-rtr.entrypoints=websecure"
+      - "traefik.http.routers.unifico-rtr.rule=Host(`unifico.local.$DOMAINNAME_NA`) || Host(`unifico.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.unifico-rtr.service=unifico-svc"
+      - "traefik.http.routers.unifico-https.middlewares=chain-no-auth@file"
+      - "traefik.http.services.unifico-svc.loadBalancer.server.port=8443"
+      - "traefik.http.services.unifico-svc.loadbalancer.server.scheme=https"

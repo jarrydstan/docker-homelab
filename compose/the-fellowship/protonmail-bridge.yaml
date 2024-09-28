@@ -3,10 +3,12 @@ services:
     image: shenxn/protonmail-bridge:latest
     container_name: protonmail-bridge
     restart: unless-stopped
-    network:
+    networks:
       - frontend
     ports:
-      - "1025:25"
-      - "1143:143"
+      - 1025:25
+      - 1143:143
     volumes:
       - $DOCKERDIR/appdata/protonmail:/root
+      - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/privkey.pem:/root/.config/protonmail/bridge-v3/key.pem:ro
+      - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/fullchain.pem:/root/.config/protonmail/bridge-v3/cert.pem:ro

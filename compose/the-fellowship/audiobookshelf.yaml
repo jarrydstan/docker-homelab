@@ -1,0 +1,22 @@
+services:
+  audiobookshelf:
+    container_name: audiobookshelf
+    networks:
+      - frontend
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    # ports:
+    #   - 13378:80
+    volumes:
+      - $DATADIR/Audio-ePub:/audiobooks
+      # - </path/to/podcasts>:/podcasts
+      - $DOCKERDIR/appdata/audiobookshelf/config:/config
+      - $DOCKERDIR/appdata/audiobookshelf/metadata:/metadata
+    environment:
+      - TZ=$TZ
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.audio-https.entrypoints=websecure"
+      - "traefik.http.routers.audio-https.rule=Host(`audio.$DOMAINNAME_NA`)"
+      - "traeifk.http.routers.audio-https.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.audio-https.service=audio-svc"
+      - "traefik.http.services.audio-svc.loadBalancer.server.port=80"

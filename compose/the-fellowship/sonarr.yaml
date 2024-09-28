@@ -17,7 +17,7 @@ services:
     # - "8989:8989"
     volumes:
       - $DOCKERDIR/appdata/sonarr/config:/config
-      - $DATADIR:/data
+      - $DATADIR:/media
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ
@@ -26,7 +26,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr-rtr.entrypoints=websecure"
-      - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.local.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.local.$DOMAINNAME_NA`) || Host(`sonarr.$DOMAINNAME_NA`)"
       - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
       - "traefik.http.services.sonarr-svc.loadBalancer.server.port=8989"
       # - "traefik."

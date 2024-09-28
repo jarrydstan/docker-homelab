@@ -3,7 +3,8 @@ services:
     image: adguard/adguardhome
     container_name: adguard
     networks:
-      - frontend
+      frontend:
+        ipv4_address: 192.168.12.120
     ports:
       - 53:53/tcp
       - 53:53/udp
@@ -15,10 +16,13 @@ services:
     volumes:
       - $DOCKERDIR/appdata/adguard/data:/opt/adguardhome/work
       - $DOCKERDIR/appdata/adguard/config:/opt/adguardhome/conf
+      - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/fullchain.pem:/opt/adguardhome/certs/fullchain.pem:ro
+      - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/privkey.pem:/opt/adguardhome/certs/privkey.pem:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.adguard-https.entrypoints=websecure"
       - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`) || Host(`adguard.$DOMAINNAME_J`)"
+      - "traefik.http.routers.adguard-https.middlewares=chain-oauth@file"
       - "traefik.http.routers.adguard-https.service=adguard-dash-svc"
       - "traefik.http.services.adguard-dash-svc.loadBalancer.server.port=10232"
       # - "traefik.http.routers.adguard-https.tls=true"

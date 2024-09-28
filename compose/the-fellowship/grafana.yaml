@@ -1,0 +1,19 @@
+services:
+  grafana:
+    image: docker.io/grafana/grafana-oss:11.1.4
+    container_name: grafana
+    networks:
+      - frontend
+      - backend
+    # ports:
+    #   - "3000:3000"
+    volumes:
+      - $DOCKERDIR/appdata/grafana:/var/lib/grafana
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana-rtr.entrypoints=websecure"
+      - "traefik.http.routers.grafana-rtr.rule=Host(`grafana.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.grafana-rtr.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.grafana-rtr.service=grafana-svc"
+      - "traefik.http.services.grafana-svc.loadBalancer.server.port=3000"

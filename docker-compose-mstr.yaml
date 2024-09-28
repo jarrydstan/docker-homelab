@@ -32,28 +32,45 @@ secrets:
     file: $DOCKERDIR/.secrets/pgsql_root_password
   basic_auth_credentials:
     file: $DOCKERDIR/.secrets/basic_auth_credentials
+  cloudflare:
+    file: $DOCKERDIR/.secrets/cloudflare
 
 include:
   # CORE
-  - compose/$HOSTNAME/socket-proxy.yaml
-  - compose/$HOSTNAME/portainer.yaml
+  - compose/$HOSTNAME/adguard.yaml
+  - compose/$HOSTNAME/audiobookshelf.yaml
+  - compose/$HOSTNAME/certbot.yaml
+  - compose/$HOSTNAME/crowdsec.yaml
+  - compose/$HOSTNAME/deunhealth.yaml
   - compose/$HOSTNAME/dozzle.yaml
   - compose/$HOSTNAME/homepage.yaml
-  - compose/$HOSTNAME/adguard.yaml
+  - compose/$HOSTNAME/portainer.yaml
+  - compose/$HOSTNAME/protonmail-bridge.yaml
   - compose/$HOSTNAME/proxy.yaml
-  # MEDIA
+  - compose/$HOSTNAME/socket-proxy.yaml
+  - compose/$HOSTNAME/traefik-bouncer.yaml
+  - compose/$HOSTNAME/unifi.yaml
   # DOWNLOADERS
-  - compose/$HOSTNAME/sabnzbd.yaml
   - compose/$HOSTNAME/qbittorrent.yaml
+  - compose/$HOSTNAME/sabnzbd.yaml
   # PVRS
-  - compose/$HOSTNAME/radarr.yaml
-  - compose/$HOSTNAME/sonarr.yaml
-  - compose/$HOSTNAME/prowlarr.yaml
   - compose/$HOSTNAME/jellyseer.yaml
+  - compose/$HOSTNAME/prowlarr.yaml
+  - compose/$HOSTNAME/radarr.yaml
+  - compose/$HOSTNAME/readarr.yaml
+  - compose/$HOSTNAME/sonarr.yaml
+  - compose/$HOSTNAME/bazarr.yaml
+  - compose/$HOSTNAME/qbitrr.yaml
   # MONITORING
+  - compose/$HOSTNAME/prometheus.yaml
+  - compose/$HOSTNAME/grafana.yaml
+  - compose/$HOSTNAME/exportarr.yaml
+  - compose/$HOSTNAME/nodeexporter.yaml
+  - compose/$HOSTNAME/cadvisor.yaml
   # MAINTENANCE
   - compose/$HOSTNAME/docker-gc.yaml
   # NETWORK
   - compose/$HOSTNAME/gluetun.yaml
   # WEB
   - compose/$HOSTNAME/webapp.yaml
+  - compose/$HOSTNAME/mealie.yaml

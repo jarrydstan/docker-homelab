@@ -1,0 +1,29 @@
+services:
+  qbitrr:
+    container_name: qbitrr
+    image: feramance/qbitrr:latest
+    user: 1000:1000 # Required to ensure the container is run as the user who has perms to see the 2 mount points and the ability to write to the CompletedDownloadFolder mount
+    tty: true # Ensure the output of docker-compose logs qBitrr are properly colored.
+    restart: unless-stopped
+    networks:
+      - frontend
+    environment:
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $DOCKERDIR/appdata/qbitrr:/config # Config folder for qBitrr
+      - $DATADIR/downloads:/completed_downloads:rw # The script will ALWAYS require write permission in this folder if mounted, this folder is used to monitor completed downloads and if not present will cause the script to ignore downloaded file monitoring.
+      # Now just to make sure it is clean, when using this script in a docker you will need to ensure you config.toml values reflect the mounted folders.
+      # The same would apply to Settings.CompletedDownloadFolder
+      # e.g CompletedDownloadFolder = /completed_downloads/folder/in/container
+
+    logging: # this script will generate a LOT of logs - so it is up to you to decide how much of it you want to store
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: 3
+    depends_on: # Not needed but this ensures qBitrr only starts if the dependencies are up and running
+      - qbittorrent
+      - radarr
+      - sonarr
+      - jellyseerr

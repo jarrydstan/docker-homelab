@@ -1,0 +1,25 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    networks:
+      - frontend
+      - backend
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - $DOCKERDIR/appdata/bazarr/config:/config
+      - $DATADIR/Movies:/movies #optional
+      - $DATADIR/TV:/tv #optional
+    # ports:
+    #   - 6767:6767
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bazarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.bazarr-rtr.rule=Host(`bazarr.local.$DOMAINNAME_NA`) || Host(`bazarr.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.bazarr-rtr.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.bazarr-rtr.service=bazarr-svc"
+      - "traefik.http.services.bazarr-svc.loadBalancer.server.port=6767"

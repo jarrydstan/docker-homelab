@@ -17,7 +17,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - $DOCKERDIR/appdata/sabnzbd:/config
-      - $DATADIR/usenet/:/data/usenet
+      - $DATADIR/usenet/:/media/usenet
     environment:
       PUID: $PUID
       PGID: $PGID

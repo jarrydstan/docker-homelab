@@ -10,11 +10,18 @@ services:
       - socket_proxy
       - backend
       - frontend
-    ports:
-      - "3000:3000"
+    # ports:
+    # - "3000:3000"
     volumes:
       - $DOCKERDIR/appdata/homepage/config:/app/config
     environment:
       TZ: $TZ
       PUID: $PUID
-      PGID: $PGID
+      PGID: 999
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage-https.entrypoints=websecure"
+      - "traefik.http.routers.homepage-https.rule=Host(`home.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.homepage-https.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.homepage-https.service=homepage-svc"
+      - "traefik.http.services.homepage-svc.loadBalancer.server.port=3000"

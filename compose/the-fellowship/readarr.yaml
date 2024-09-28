@@ -2,7 +2,7 @@ services:
   readarr:
     image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
-    network:
+    networks:
       - frontend
     environment:
       - PUID=1000
@@ -10,8 +10,15 @@ services:
       - TZ=$TZ
     volumes:
       - $DOCKERDIR/appdata/readarr/config:/config
-      - $DATADIR:/data #optional
+      - $DATADIR:/media #optional
       # - /path/to/downloadclient-downloads:/downloads #optional
     # ports:
     # - 8787:8787
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.readarr-https.entrypoints=websecure"
+      - "traefik.http.routers.readarr-https.rule=Host(`readarr.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.readarr-https.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.readarr-https.service=readarr-svc"
+      - "traefik.http.services.readarr-svc.loadBalancer.server.port=8787"
