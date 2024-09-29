@@ -21,9 +21,9 @@ services:
       TZ: $TZ
       # DISABLE_LOCAL_API: "true" # Only after successfully registering and validating remote agent below.
       # For the following, check local_api_credentials.yaml after cscli lapi register (secondary machine) and cscli machine validate (on primary machine)
-      AGENT_USERNAME: $CROWDSEC_AGENT_USERNAME
-      AGENT_PASSWORD: $CROWDSEC_AGENT_PASSWORD
-      LOCAL_API_URL: $CROWDSEC_LOCAL_API_URL
+      # AGENT_USERNAME: $CROWDSEC_AGENT_USERNAME
+      # AGENT_PASSWORD: $CROWDSEC_AGENT_PASSWORD
+      # LOCAL_API_URL: $CROWDSEC_LOCAL_API_URL
     volumes:
       - $DOCKERDIR/logs/:/logs/:ro
       - /etc/localtime:/etc/localtime:ro
