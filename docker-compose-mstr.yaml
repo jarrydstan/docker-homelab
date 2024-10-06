@@ -38,8 +38,8 @@ secrets:
 include:
   # CORE
   - compose/$HOSTNAME/adguard.yaml
-  - compose/$HOSTNAME/audiobookshelf.yaml
-  - compose/$HOSTNAME/certbot.yaml
+  # - compose/$HOSTNAME/audiobookshelf.yaml
+  # - compose/$HOSTNAME/certbot.yaml
   - compose/$HOSTNAME/crowdsec.yaml
   - compose/$HOSTNAME/deunhealth.yaml
   - compose/$HOSTNAME/dozzle.yaml

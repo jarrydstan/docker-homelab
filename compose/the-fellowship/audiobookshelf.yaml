@@ -4,6 +4,8 @@ services:
     networks:
       - frontend
     image: ghcr.io/advplyr/audiobookshelf:latest
+    networks:
+      - frontend
     # ports:
     #   - 13378:80
     volumes:
