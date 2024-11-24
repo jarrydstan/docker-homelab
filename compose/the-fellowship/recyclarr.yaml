@@ -1,0 +1,16 @@
+services:
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    security_opt:
+      - no-new-privileges:true
+    user: $PUID:$PGID
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - $APPDIR/recyclarr/config:/config
+      - $LTIME
+    environment:
+      TZ: $TZ
+      RECYCLARR_CREATE_CONFIG: true

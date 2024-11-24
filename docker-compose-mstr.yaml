@@ -3,27 +3,30 @@ networks:
   traefik:
     name: traefik
     enable_ipv6: true
-    ipam:
-      config:
-        - subnet: fe81::/112
   backend:
     name: backend
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: 192.168.13.0/24
+        - subnet: fd16:dd1a:c8e5:3::/64
   frontend:
     name: frontend
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: 192.168.12.0/24
+        - subnet: fd16:dd1a:c8e5:2::/64
   socket_proxy:
     name: socket_proxy
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: 192.168.11.0/24
+        - subnet: fd16:dd1a:c8e5:1::/64
 
 secrets:
   cf_dns_api_tokens:
@@ -39,7 +42,7 @@ include:
   # CORE
   - compose/$HOSTNAME/adguard.yaml
   # - compose/$HOSTNAME/audiobookshelf.yaml
-  # - compose/$HOSTNAME/certbot.yaml
+  - compose/$HOSTNAME/certbot.yaml
   - compose/$HOSTNAME/crowdsec.yaml
   - compose/$HOSTNAME/deunhealth.yaml
   - compose/$HOSTNAME/dozzle.yaml
@@ -61,6 +64,7 @@ include:
   - compose/$HOSTNAME/sonarr.yaml
   - compose/$HOSTNAME/bazarr.yaml
   - compose/$HOSTNAME/qbitrr.yaml
+  - compose/$HOSTNAME/recyclarr.yaml
   # MONITORING
   - compose/$HOSTNAME/prometheus.yaml
   - compose/$HOSTNAME/grafana.yaml

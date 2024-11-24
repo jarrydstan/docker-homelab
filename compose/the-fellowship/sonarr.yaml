@@ -29,4 +29,3 @@ services:
       - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.local.$DOMAINNAME_NA`) || Host(`sonarr.$DOMAINNAME_NA`)"
       - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
       - "traefik.http.services.sonarr-svc.loadBalancer.server.port=8989"
-      # - "traefik."

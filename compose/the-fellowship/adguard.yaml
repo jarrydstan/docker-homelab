@@ -4,6 +4,7 @@ services:
     container_name: adguard
     networks:
       frontend:
+        # ipv6_address: fd16:dd1a:c8e4:2::1123
         ipv4_address: 192.168.12.120
     ports:
       - 53:53/tcp
@@ -22,7 +23,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.adguard-https.entrypoints=websecure"
       - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`) || Host(`adguard.$DOMAINNAME_J`)"
-      - "traefik.http.routers.adguard-https.middlewares=chain-oauth@file"
+      - "traefik.http.routers.adguard-https.middlewares=chain-no-auth@file"
       - "traefik.http.routers.adguard-https.service=adguard-dash-svc"
       - "traefik.http.services.adguard-dash-svc.loadBalancer.server.port=10232"
       # - "traefik.http.routers.adguard-https.tls=true"

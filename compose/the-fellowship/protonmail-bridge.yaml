@@ -3,6 +3,8 @@ services:
     image: shenxn/protonmail-bridge:latest
     container_name: protonmail-bridge
     restart: unless-stopped
+    # entrypoint:
+    #   ["bash", "/protonmail/entrypoint.sh && sleep 60 && status"]
     networks:
       - frontend
     ports:
