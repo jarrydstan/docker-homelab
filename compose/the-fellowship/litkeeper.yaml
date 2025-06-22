@@ -1,0 +1,17 @@
+services:
+  litkeeper:
+    image: ghcr.io/redwoodstory/litkeeper:latest
+    restart: unless-stopped
+    container_name: litkeeper
+    networks:
+      - frontend
+    volumes:
+      - $DATADIR/Audio-ePub/ingest:/litkeeper/app/data/epubs
+      - $DOCKERDIR/logs/litkeeper:/litkeeper/app/data/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.litkeeper-https.entrypoints=websecure"
+      - "traefik.http.routers.litkeeper-https.rule=Host(`litkeeper.$DOMAINNAME_NA`)"
+      - "traeifk.http.routers.litkeeper-https.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.litkeeper-https.service=litkeeper-svc"
+      - "traefik.http.services.litkeeper-svc.loadBalancer.server.port=5000"

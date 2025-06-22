@@ -1,14 +1,10 @@
 services:
-  # Gluetun - VPN Client for Docker Containers and More
-  # Gluetun only for use by torrent clients + on demand lan devices.
-  # Arr apps do not need VPN (not recommended), unless you have ISP/country restrictions.
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-    # profiles: ["core", "all"]
     networks:
       - frontend
     cap_add:
@@ -17,9 +13,6 @@ services:
       - /dev/net/tun
     ports:
       - "8081:8080" # Exposing qBittorrent through Docker Host LAN IP
-    # #   - 8888:8888/tcp # HTTP proxy
-    # #   - 8388:8388/tcp # Shadowsocks
-    # #   - 8388:8388/udp # Shadowsocks
     volumes:
       - $DOCKERDIR/appdata/gluetun:/gluetun
       - $DOCKERDIR/appdata/gluetun/forwarded_port:/tmp/gluetun/forwarded_port
@@ -30,8 +23,6 @@ services:
       TZ: $TZ
       VPN_SERVICE_PROVIDER: protonvpn
       VPN_TYPE: openvpn
-      # OPENVPN_USER: proton_vpn_user
-      # OPENVPN_PASSWORD: proton_vpn_pass
       OPENVPN_USER: $PROTONVPN_USER
       OPENVPN_PASSWORD: $PROTONVPN_PASS
       SERVER_COUNTRIES: Australia

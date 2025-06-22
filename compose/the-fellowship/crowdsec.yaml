@@ -15,19 +15,15 @@ services:
       - "$CROWDSEC_PROMETHEUS_EXPORT:6060"
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
-      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/iptables crowdsecurity/linux fulljackz/proxmox crowdsecurity/nginx crowdsecurity/sshd firix/authentik LePresidente/jellyseerr gauth-fr/immich crowdsecurity/unifi"
-      GID: "${GID-1000}"
+      COLLECTIONS: $CROWDSEC_COLLECTIONS
+      GID: "${GID-996}"
       CUSTOM_HOSTNAME: homelab
+      LEVEL_WARN: true
+      LEVEL_INFO: false
       TZ: $TZ
-      # DISABLE_LOCAL_API: "true" # Only after successfully registering and validating remote agent below.
-      # For the following, check local_api_credentials.yaml after cscli lapi register (secondary machine) and cscli machine validate (on primary machine)
-      # AGENT_USERNAME: $CROWDSEC_AGENT_USERNAME
-      # AGENT_PASSWORD: $CROWDSEC_AGENT_PASSWORD
-      # LOCAL_API_URL: $CROWDSEC_LOCAL_API_URL
     volumes:
       - $DOCKERDIR/logs/:/logs/:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/log:/var/log:ro
-      # - $EXTDRIVE/zbox/var/log:/logs/zbox:ro
       - $DOCKERDIR/appdata/crowdsec/data:/var/lib/crowdsec/data
       - $DOCKERDIR/appdata/crowdsec/config:/etc/crowdsec

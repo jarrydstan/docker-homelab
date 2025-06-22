@@ -1,0 +1,30 @@
+services:
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    networks:
+      - frontend
+    restart: unless-stopped
+    volumes:
+      - $APPDIR/beszel/data:/beszel_data
+      - $APPDIR/beszel/socket:/beszel_socket
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.beszel-rtr.rule=Host(`monitor.$DOMAINNAME_J`)"
+      - "traefik.http.routers.beszel-rtr.entrypoints=websecure"
+      - "traefik.http.routers.beszel-rtr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.beszel-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.beszel-rtr.service=beszel-svc"
+      - "traefik.http.services.beszel-svc.loadbalancer.server.port=8090"
+
+  beszel-agent:
+    image: henrygd/beszel-agent:latest
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - $APPDIR/beszel/socket:/beszel_socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      KEY: $BESZEL_KEY

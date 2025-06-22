@@ -1,0 +1,15 @@
+services:
+  cleanuperr:
+    image: ghcr.io/flmorg/cleanuperr:latest
+    container_name: cleanuperr
+    restart: unless-stopped
+    networks:
+      - frontend
+    env_file: "~/docker-homelab/cleanuperr.env"
+    volumes:
+      #   # if you want persistent logs
+      #   - $APPDIR/cleanuperr/logs:/var/logs
+      #   # if you want to ignore certain downloads from being processed
+      - $APPDIR/cleanuperr/data/blacklist.txt:/blacklist.txt
+      #   # if you're using cross-seed and the hardlinks functionality
+      - /mnt/media/downloads:/downloads

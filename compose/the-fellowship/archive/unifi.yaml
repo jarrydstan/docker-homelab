@@ -28,7 +28,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.unifico-rtr.entrypoints=websecure"
-      - "traefik.http.routers.unifico-rtr.rule=Host(`unifico.local.$DOMAINNAME_NA`) || Host(`unifico.$DOMAINNAME_NA`)"
+      - "traefik.http.routers.unifico-rtr.rule=Host(`unifico.local.$DOMAINNAME_J`) || Host(`unifico.$DOMAINNAME_J`)"
       - "traefik.http.routers.unifico-rtr.service=unifico-svc"
       - "traefik.http.routers.unifico-https.middlewares=chain-no-auth@file"
       - "traefik.http.services.unifico-svc.loadBalancer.server.port=8443"

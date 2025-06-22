@@ -6,13 +6,13 @@ services:
     image: certbot/dns-cloudflare
 
     # Dry Run
-    # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${CERTBOT_EMAIL} -d *.$DOMAINNAME_NA --server https://acme-v02.api.letsencrypt.org/directory --dry-run
+    # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${ADMIN_EMAIL} -d *.$DOMAINNAME_NA --server https://acme-v02.api.letsencrypt.org/directory --dry-run
 
     # Issue certificate
-    # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${CERTBOT_EMAIL} -d *.$DOMAINNAME_NA --server https://acme-v02.api.letsencrypt.org/directory
+    # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${ADMIN_EMAIL} -d *.$DOMAINNAME_NA --server https://acme-v02.api.letsencrypt.org/directory
 
     # Renew certificate
-    command: renew --non-interactive --no-self-upgrade --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${CERTBOT_EMAIL} --server https://acme-v02.api.letsencrypt.org/directory
+    command: renew --non-interactive --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${ADMIN_EMAIL} --server https://acme-v02.api.letsencrypt.org/directory
 
     volumes:
       - $DOCKERDIR/appdata/cert:/etc/letsencrypt

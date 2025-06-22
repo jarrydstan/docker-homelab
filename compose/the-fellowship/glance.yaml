@@ -1,0 +1,25 @@
+services:
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    dns:
+      - 192.168.12.120
+    networks:
+      - frontend
+    volumes:
+      - $APPDIR/glance/config:/app/config
+      - $APPDIR/glance/assets:/app/assets
+      # Optionally, also mount docker socket if you want to use the docker containers widget
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - 8080:8080
+    env_file: $DOCKERDIR/.env
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.glance-rtr.rule=Host(`dash.$DOMAINNAME_J`)"
+      - "traefik.http.routers.glance-rtr.entrypoints=websecure"
+      - "traefik.http.routers.glance-rtr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.glance-rtr.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.glance-rtr.service=glance-svc"
+      - "traefik.http.services.glance-svc.loadbalancer.server.port=8080"

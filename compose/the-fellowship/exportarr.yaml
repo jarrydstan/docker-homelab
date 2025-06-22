@@ -39,7 +39,6 @@ services:
       # PROWLARR_BACKFILL_SINCE_DATE: "2023-03-01" # optional
     networks:
       - backend
-    #     - your_custom_network # optional
     # ports:
     # - "9710:9710"
     restart: unless-stopped
@@ -53,7 +52,6 @@ services:
       APIKEY: $SABNZBD_API_KEY
     networks:
       - backend
-    #     - your_custom_network # optional
     # ports:
     #   - "9711:9711"
     restart: unless-stopped
@@ -67,7 +65,6 @@ services:
       APIKEY: $BAZARR_API
     networks:
       - backend
-    #     - your_custom_network # optional
     # ports:
     #   - "9712:9712"
     restart: unless-stopped
@@ -87,16 +84,3 @@ services:
     restart: unless-stopped
     # volumes:
     #   - ./pve/pve.yml:/etc/prometheus/pve.yml
-  # readarr-exporter:
-  #   image: ghcr.io/onedr0p/exportarr:v2.0
-  #   container_name: readarr-exporter
-  #   command: ["readarr"]
-  #   environment:
-  #     PORT: 9713
-  #     URL: "http://x.x.x.x:8787" # or; http://readarr:8787
-  #     APIKEY: "xxx"
-  #   #    networks:
-  #   #     - your_custom_network # optional
-  #   ports:
-  #     - "9713:9713"
-  #   restart: unless-stopped

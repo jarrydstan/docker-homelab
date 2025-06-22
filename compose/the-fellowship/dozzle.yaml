@@ -18,6 +18,4 @@ services:
       DOZZLE_LEVEL: info
       DOZZLE_TAILSIZE: 300
       DOZZLE_FILTER: "status=running"
-      # DOZZLE_FILTER: "label=log_me" # limits logs displayed to containers with this label
-      DOCKER_HOST: tcp://socket-proxy:2375
       DOZZLE_REMOTE_HOST: $DOZZLE_REMOTE_HOST

@@ -1,0 +1,50 @@
+services:
+  habitica-server:
+    image: docker.io/awinterstein/habitica-server:latest
+    container_name: habitica-server
+    dns:
+      - 192.168.12.120
+    depends_on:
+      - habitica-mongo
+    environment:
+      - NODE_DB_URI=mongodb://mongo/habitica # this only needs to be adapted if using a separate database
+      - BASE_URL=http://habitica.$DOMAINNAME_J # change this to the URL under which your instance will be reachable
+      - INVITE_ONLY=true # change to `true` after registration of initial users, to restrict further registrations
+      - EMAIL_SERVER_URL=$EMAIL_SERVER_URL
+      - EMAIL_SERVER_PORT=$EMAIL_SERVER_PORT
+      - EMAIL_SERVER_AUTH_USER=${SMTP_USER}
+      - EMAIL_SERVER_AUTH_PASSWORD=${SMTP_PASS}
+      - ADMIN_EMAIL=$ADMIN_EMAIL
+    networks:
+      frontend:
+      backend:
+        aliases:
+          - server
+    # ports:
+    # - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.habitica-rtr.rule=Host(`habitica.$DOMAINNAME_J`)"
+      - "traefik.http.routers.habitica-rtr.middlewares=chain-oauth@file"
+      - "traefik.http.routers.habitica-rtr.service=habitica-svc"
+      - "traefik.http.services.habitica-svc.loadbalancer.server.port=3000"
+  habitica-mongo:
+    image: docker.io/mongo:latest
+    restart: unless-stopped
+    container_name: habitica-mongo
+    hostname: mongo
+    command: ["--replSet", "rs", "--bind_ip_all", "--port", "27017"]
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate() }" | mongosh --port 27017 --quiet
+      interval: 10s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
+    volumes:
+      - $APPDIR/habitica/db:/data/db:rw
+      - $APPDIR/habitica/dbconf:/data/configdb
+    networks:
+      backend:
+        aliases:
+          - mongo

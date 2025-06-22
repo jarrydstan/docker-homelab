@@ -1,0 +1,21 @@
+services:
+  paperless-ai:
+    container_name: paperless-ai
+    image: clusterzx/paperless-ai
+    restart: unless-stopped
+    networks:
+      - backend
+    depends_on:
+      - webserver
+    ports:
+      - "3001:3000"
+    volumes:
+      - $APPDIR/paperless-ai/data:/app/data
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.paperless-ngx-rtr.rule=Host(`docs.$DOMAINNAME_J`)"
+    #   - "traefik.http.routers.paperless-ngx-rtr.entrypoints=websecure"
+    #   - "traefik.http.routers.paperless-ngx-rtr.tls.certresolver=letsencrypt"
+    #   - "traefik.http.routers.paperless-ngx-rtr.middlewares=chain-oauth@file"
+    #   - "traefik.http.routers.paperless-ngx-rtr.service=paperless-ngx-svc"
+    #   - "traefik.http.services.paperless-ngx-svc.loadbalancer.server.port=8000"

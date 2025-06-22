@@ -12,7 +12,8 @@ services:
       - 784:784/udp
       - 853:853/tcp
       - 853:853/udp
-      # - 3000:3000/tcp
+      - 7443:443/tcp
+      - 3000:3000/tcp
       # - 9080:80/tcp
     volumes:
       - $DOCKERDIR/appdata/adguard/data:/opt/adguardhome/work
@@ -21,11 +22,20 @@ services:
       - $DOCKERDIR/appdata/cert/live/$DOMAINNAME_NA/privkey.pem:/opt/adguardhome/certs/privkey.pem:ro
     labels:
       - "traefik.enable=true"
+      # DNS over HTTPS
+      # - "traefik.http.routers.adguard-dns.entrypoints=websecure"
+      # - "traefik.http.routers.adguard-dns.rule=Host(`adguard.$DOMAINNAME_NA`) && PathPrefix(`/dns-query`)"
+      # - "traefik.http.routers.adguard-dns.service=adguard-dns-svc"
+      # - "traefik.http.services.adguard-dns-svc.loadbalancer.server.scheme=https"
+      # - "traefik.http.services.adguard-dns-svc.loadBalancer.server.port=443"
+      # Adguard Dashboard
       - "traefik.http.routers.adguard-https.entrypoints=websecure"
+      - "traefik.http.routers.adguard-https.priority=1"
       - "traefik.http.routers.adguard-https.rule=Host(`adguard.$DOMAINNAME_NA`) || Host(`adguard.$DOMAINNAME_J`)"
       - "traefik.http.routers.adguard-https.middlewares=chain-no-auth@file"
       - "traefik.http.routers.adguard-https.service=adguard-dash-svc"
-      - "traefik.http.services.adguard-dash-svc.loadBalancer.server.port=10232"
+      - "traefik.http.services.adguard-dash-svc.loadbalancer.server.scheme=https"
+      - "traefik.http.services.adguard-dash-svc.loadBalancer.server.port=443"
       # - "traefik.http.routers.adguard-https.tls=true"
       # - "traefik.http.routers.adguard-https.tls.certResolver=production"
       # - "traefik.http.routers.adguard-https.tls.domains[0].main=*.$DOMAINNAME_NA"

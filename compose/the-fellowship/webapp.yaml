@@ -17,4 +17,3 @@ services:
       - "traefik.http.routers.webapp-rtr.service=webapp-svc"
       - "traefik.http.routers.webapp-rtr.middlewares=chain-no-auth@file"
       - "traefik.http.services.webapp-svc.loadBalancer.server.port=3000"
-  # Add more containers below (nginx, postgres, etc.)

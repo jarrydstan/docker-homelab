@@ -6,7 +6,7 @@ services:
     networks:
       - frontend
     environment:
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
       - TZ=$TZ
       - JELLYFIN_TYPE=emby
     # ports:

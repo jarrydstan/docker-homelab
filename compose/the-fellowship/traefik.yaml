@@ -1,10 +1,20 @@
 services:
   traefik:
     image: traefik:latest
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 10
+
+    extra_hosts:
+      - "adguard.$DOMAINNAME_NA:192.168.12.120"
     networks:
       frontend:
         ipv4_address: 192.168.12.254
       socket_proxy:
+        ipv4_address: 192.168.11.8
+        ipv6_address: fd16:dd1a:c8e5:1::9
     ports:
       # - 8080:8080
       # - 80:80
@@ -24,22 +34,24 @@ services:
         mode: host
     container_name: traefik
     restart: always
-    command:
-      # - --entrypoints.websecure.http.tls.domains[0].main=$DOMAINNAME_NA
-      # - --entrypoints.websecure.http.tls.domains[0].sans=*.$DOMAINNAME_NA
-      # - --entrypoints.websecure.http.tls.domains[1].main=$DOMAINNAME_J
-      # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAINNAME_J
+    # command:
+    # - --entrypoints.websecure.http.tls.domains[0].main=$DOMAINNAME_NA
+    # - --entrypoints.websecure.http.tls.domains[0].sans=*.$DOMAINNAME_NA
+    # - --entrypoints.websecure.http.tls.domains[1].main=$DOMAINNAME_J
+    # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAINNAME_J
     environment:
       - CF_DNS_API_TOKEN_FILE=/run/secrets/cf_dns_api_tokens
       - TZ=$TZ
       - DOMAINNAME_NA
       - DOMAINNAME_J
+      - CROWDSEC_BOUNCER_TRAEFIK_API_KEY
     secrets:
       - cf_dns_api_tokens
       - basic_auth_credentials
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock
       - $DOCKERDIR/appdata/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - $DOCKERDIR/appdata/traefik/config/ban.html:/ban.html
       - $DOCKERDIR/appdata/traefik/letsencrypt/acme-prod.json:/letsencrypt/acme-prod.json
       - $DOCKERDIR/appdata/traefik/rules:/rules:ro
       - $DOCKERDIR/logs:/log
@@ -48,13 +60,14 @@ services:
       - "traefik.enable=true"
       # HTTP Routers
       - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
-      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.local.$DOMAINNAME_NA`) && PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
-      # - "traefik.http.routers.traefik-rtr.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.local.$DOMAINNAME_NA`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-lan-only@file"
       # Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       # Healthcheck/ping
       - "traefik.http.routers.ping.rule=Host(`traefik.local.$DOMAINNAME_NA`) && Path(`/ping`)"
       # - "traefik.http.routers.ping.tls=true"
+      - "traefik.http.routers.ping.middlewares=chain-lan-only@file"
       - "traefik.http.routers.ping.service=ping@internal"
       # Middlewares
       # - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"

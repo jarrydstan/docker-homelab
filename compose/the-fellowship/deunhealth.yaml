@@ -6,11 +6,12 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    network_mode: "none"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     # profiles: ["apps", "all"]
-    networks:
-      - socket_proxy
     environment:
       LOG_LEVEL: info
       HEALTH_SERVER_ADDRESS: 127.0.0.1:9999
       TZ: $TZ
-      DOCKER_HOST: tcp://socket-proxy:2375
+      # DOCKER_HOST: tcp://socket-proxy:2375

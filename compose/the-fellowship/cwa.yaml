@@ -1,0 +1,29 @@
+services:
+    calibre-web-automated:
+        image: crocodilestick/calibre-web-automated:latest
+        container_name: calibre-web-automated
+        networks:
+            - frontend
+        ports:
+          - 8083:8083
+        environment:
+          # Only change these if you know what you're doing
+          - PUID=1000
+          - PGID=1000
+          # Edit to match your current timezone https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+          - TZ=$TZ
+        volumes:
+          # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings ect.
+          - $APPDIR/cwa/config:/config 
+          # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
+          - $DATADIR/Audio-ePub/ingest:/cwa-book-ingest
+          # If you don't have an existing library, CWA will automatically create one at the bind provided here
+          - $DATADIR/Audio-ePub/epub:/calibre-library 
+        restart: unless-stopped
+        labels:
+              - "traefik.enable=true"
+              - "traefik.http.routers.cwa-https.entrypoints=websecure"
+              - "traefik.http.routers.cwa-https.rule=Host(`cwa.$DOMAINNAME_NA`)"
+              - "traeifk.http.routers.cwa-https.middlewares=chain-no-auth@file"
+              - "traefik.http.routers.cwa-https.service=cwa-svc"
+              - "traefik.http.services.cwa-svc.loadBalancer.server.port=8083"

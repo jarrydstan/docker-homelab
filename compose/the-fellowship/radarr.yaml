@@ -6,18 +6,16 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: "unless-stopped"
-    # profiles: ["media", "arrs", "all"]
     networks:
       frontend:
         ipv4_address: 192.168.12.231
       backend:
         ipv4_address: 192.168.13.231
     # ports:
-    # - "192.168.13.231:7878:7878"
+    # - "7878:7878"
     volumes:
       - $DOCKERDIR/appdata/radarr/config:/config
       - $DATADIR:/media
-      - /data/usenet/complete/movies
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ
