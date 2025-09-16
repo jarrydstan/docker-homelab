@@ -1,7 +1,7 @@
 services:
-  cleanuperr:
-    image: ghcr.io/flmorg/cleanuperr:latest
-    container_name: cleanuperr
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: cleanuparr
     restart: unless-stopped
     networks:
       - frontend
@@ -11,5 +11,13 @@ services:
       #   - $APPDIR/cleanuperr/logs:/var/logs
       #   # if you want to ignore certain downloads from being processed
       - $APPDIR/cleanuperr/data/blacklist.txt:/blacklist.txt
+      - $APPDIR/cleanuperr/config:/config
       #   # if you're using cross-seed and the hardlinks functionality
       - /mnt/media/downloads:/downloads
+    labels:
+      traefik.enabled: true
+      traefik.http.routers.cleanuparr-https.entrypoints: websecure
+      traefik.http.routers.cleanuparr-https.rule: "Host(`cleanuparr.$DOMAINNAME_NA`)"
+      traefik.http.routers.cleanuparr-https.middlewares: chain-lan-only@file
+      traefik.http.routers.cleanuparr-https.service: cleanuparr-svc
+      traefik.http.services.cleanuparr-svc.loadBalancer.server.port: 11011

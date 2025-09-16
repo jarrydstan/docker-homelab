@@ -32,6 +32,10 @@ services:
         published: 8085
         protocol: tcp
         mode: host
+      - target: 2424
+        published: 2424
+        protocol: tcp
+        mode: host
     container_name: traefik
     restart: always
     # command:
