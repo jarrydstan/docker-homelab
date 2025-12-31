@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+
+  "dockerfile": {
+    "managerFilePatterns": ["compose/the-fellowship/*.yaml"],
+    "ignorePaths": ["docker-compose-mstr.yaml"]
+  }
+}
