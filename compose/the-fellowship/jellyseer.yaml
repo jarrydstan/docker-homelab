@@ -1,6 +1,7 @@
 services:
   jellyseerr:
-    image: ghcr.io/seerr-team/seerr:v2.7.3
+    image: fallenbagel/jellyseerr:preview-OIDC
+    init: true
     container_name: jellyseerr
     dns: "192.168.12.120"
     networks:
@@ -9,8 +10,16 @@ services:
       - LOG_LEVEL=info
       - TZ=$TZ
       - JELLYFIN_TYPE=emby
+      - PUID=1000
+      - PGID=1000
     # ports:
     #   - 5055:5055
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     volumes:
       - $DOCKERDIR/appdata/jellyseer/config:/app/config
     restart: unless-stopped
