@@ -1,0 +1,38 @@
+services:
+  mindwtr-cloud:
+    image: ghcr.io/dongdongbh/mindwtr-cloud:latest
+    container_name: mindwtr-cloud
+    hostname: mindwtr-cloud
+    restart: always
+    networks:
+      - frontend
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:8787/health || echo 'Health check failed'",
+        ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # ports:
+    #   - 8787:8787
+    environment:
+      - MINDWTR_CLOUD_AUTH_TOKENS=${MINDWTR_CLOUD_AUTH_TOKENS}
+    volumes:
+      - $DOCKERDIR/appdata/mindwtr/data:/app/cloud_data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mindwtr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.mindwtr-rtr.rule=Host(`mindwtr.$DOMAINNAME_J`)"
+      - "traefik.http.routers.mindwtr-rtr.service=mindwtr-svc"
+      - "traefik.http.services.mindwtr-svc.loadBalancer.server.port=8787"
+
+  mindwtr-app:
+    image: ghcr.io/dongdongbh/mindwtr-app:latest
+    container_name: mindwtr-app
+    hostname: mindwtr-app
+    restart: always
+    # ports:
+    #   - 5173:5173
