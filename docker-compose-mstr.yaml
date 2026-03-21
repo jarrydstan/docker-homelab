@@ -90,3 +90,4 @@ include:
   # WEB
   - compose/$HOSTNAME/webapp.yaml
   # - compose/$HOSTNAME/mealie.yaml
+  - compose/$HOSTNAME/mindwtr.yaml
