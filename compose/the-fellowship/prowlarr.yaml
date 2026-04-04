@@ -1,7 +1,7 @@
 services:
   # prowlarr - Index management
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:2.3.0.5236-ls140
     container_name: prowlarr
     security_opt:
       - no-new-privileges:true

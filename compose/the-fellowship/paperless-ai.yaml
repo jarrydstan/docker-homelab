@@ -1,7 +1,7 @@
 services:
   paperless-ai:
     container_name: paperless-ai
-    image: clusterzx/paperless-ai
+    image: clusterzx/paperless-ai:3.0.9
     restart: unless-stopped
     networks:
       - backend

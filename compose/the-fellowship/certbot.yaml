@@ -3,7 +3,7 @@ services:
     container_name: certbot-core
     networks:
       - frontend
-    image: certbot/dns-cloudflare
+    image: certbot/dns-cloudflare:v5.4.0
 
     # Dry Run
     # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /run/secrets/cloudflare --agree-tos --email ${ADMIN_EMAIL} -d *.$DOMAINNAME_NA --server https://acme-v02.api.letsencrypt.org/directory --dry-run

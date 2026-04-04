@@ -23,7 +23,7 @@ services:
 
   webserver:
     container_name: paperless-ngx
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20
     restart: unless-stopped
     networks:
       - backend
@@ -85,7 +85,7 @@ services:
 
   tika:
     container_name: paperless-tika
-    image: docker.io/apache/tika:latest
+    image: docker.io/apache/tika:3.3.0.0
     restart: unless-stopped
     networks:
       - backend

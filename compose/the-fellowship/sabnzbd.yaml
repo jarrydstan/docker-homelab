@@ -1,7 +1,7 @@
 services:
   # SABnzbd - Binary newsgrabber (NZB downloader)
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:latest
+    image: lscr.io/linuxserver/sabnzbd:4.5.5
     container_name: sabnzbd
     security_opt:
       - no-new-privileges:true

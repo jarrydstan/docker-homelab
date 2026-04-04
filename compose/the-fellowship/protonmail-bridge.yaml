@@ -1,6 +1,6 @@
 services:
   protonmail-bridge:
-    image: shenxn/protonmail-bridge:latest
+    image: shenxn/protonmail-bridge:3.19.0-1
     container_name: protonmail-bridge
     restart: unless-stopped
     # entrypoint:

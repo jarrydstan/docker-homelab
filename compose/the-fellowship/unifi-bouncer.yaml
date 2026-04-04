@@ -1,6 +1,8 @@
 services:
   unifi-bouncer:
-    image: ghcr.io/teifun2/cs-unifi-bouncer:latest
+    image: ghcr.io/teifun2/cs-unifi-bouncer:v1.2.2
+    networks:
+      - backend
     container_name: bouncer-unifi
     environment:
       CROWDSEC_BOUNCER_API_KEY: $UNIFI_CROWDSEC_API_KEY # docker exec crowdsec cscli bouncers add unifi-bouncer

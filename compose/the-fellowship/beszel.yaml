@@ -1,6 +1,6 @@
 services:
   beszel:
-    image: henrygd/beszel:latest
+    image: henrygd/beszel:0.17.0
     container_name: beszel
     networks:
       - frontend
@@ -18,7 +18,7 @@ services:
       - "traefik.http.services.beszel-svc.loadbalancer.server.port=8090"
 
   beszel-agent:
-    image: henrygd/beszel-agent:latest
+    image: henrygd/beszel-agent:0.17.0
     container_name: beszel-agent
     restart: unless-stopped
     network_mode: host

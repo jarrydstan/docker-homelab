@@ -1,13 +1,17 @@
 services:
   litkeeper:
-    image: ghcr.io/redwoodstory/litkeeper:latest
+    image: ghcr.io/redwoodstory/litkeeper:2.1.4
     restart: unless-stopped
     container_name: litkeeper
     networks:
       - frontend
     volumes:
-      - $DATADIR/Audio-ePub/ingest:/litkeeper/app/data/epubs
+      - $DATADIR/Audio-ePub/ingest:/litkeeper/app/external
+      - $APPDIR/litkeeper/data:/litkeeper/app/data
       - $DOCKERDIR/logs/litkeeper:/litkeeper/app/data/logs
+    environment:
+      - EXTERNAL_EPUB_PATH=/litkeeper/app/external
+      - LITKEEPER_API_TOKEN=$LITKEEPER_API_TOKEN
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.litkeeper-https.entrypoints=websecure"

@@ -1,7 +1,7 @@
 services:
   # CrowdSec - Open-source & collaborative security IPS
   crowdsec:
-    image: crowdsecurity/crowdsec
+    image: crowdsecurity/crowdsec:v1.7.6-debian
     container_name: crowdsec
     security_opt:
       - no-new-privileges:true
@@ -21,9 +21,10 @@ services:
       LEVEL_WARN: true
       LEVEL_INFO: false
       TZ: $TZ
+      BOUNCER_KEY_TRAEFIK: $CROWDSEC_BOUNCER_TRAEFIK_API_KEY
     volumes:
       - $DOCKERDIR/logs/:/logs/:ro
       - /etc/localtime:/etc/localtime:ro
-      - /var/log:/var/log:ro
+      - /var/log:/var/log/host:ro
       - $DOCKERDIR/appdata/crowdsec/data:/var/lib/crowdsec/data
       - $DOCKERDIR/appdata/crowdsec/config:/etc/crowdsec
