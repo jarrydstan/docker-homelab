@@ -1,0 +1,63 @@
+services:
+  kaneo_postgres:
+    image: postgres:16-alpine
+    container_name: kaneo_postgres
+    env_file:
+      - $DOCKERDIR/.kaneo.env
+    # ports:
+    #   - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - $APPDIR/kaneo/db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER} -d kaneo
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kaneo_api:
+    image: ghcr.io/usekaneo/api:2.5.2
+    container_name: kaneo_api
+    # ports:
+    #   - "1337:1337"
+    networks:
+      - backend
+      - frontend
+    env_file:
+      - $DOCKERDIR/.kaneo.env
+    depends_on:
+      kaneo_postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kaneo-api-rtr.entrypoints=websecure"
+      - "traefik.http.routers.kaneo-api-rtr.rule=Host(`api.plan.$DOMAINNAME_J`)"
+      - "traefik.http.routers.kaneo-api-rtr.middlewares=middlewares-ipwhitelist@file"
+      - "traefik.http.routers.kaneo-api-rtr.service=kaneo-api-svc"
+      - "traefik.http.routers.kaneo-api-rtr.tls=true"
+      - "traefik.http.routers.kaneo-api-rtr.tls.certresolver=letsencrypt"
+      - "traefik.http.services.kaneo-api-svc.loadBalancer.server.port=1337"
+
+  kaneo_web:
+    image: ghcr.io/usekaneo/web:2.5.2
+    container_name: kaneo_web
+    networks:
+      - backend
+      - frontend
+    env_file:
+      - $DOCKERDIR/.kaneo.env
+    depends_on:
+      - kaneo_api
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kaneo-web-rtr.entrypoints=websecure"
+      - "traefik.http.routers.kaneo-web-rtr.rule=Host(`plan.$DOMAINNAME_J`)"
+      - "traefik.http.routers.kaneo-web-rtr.middlewares=middlewares-ipwhitelist@file"
+      - "traefik.http.routers.kaneo-web-rtr.service=kaneo-web-svc"
+      - "traefik.http.services.kaneo-web-svc.loadBalancer.server.port=5173"

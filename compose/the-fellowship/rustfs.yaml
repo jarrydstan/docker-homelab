@@ -1,0 +1,269 @@
+# Copyright 2024 RustFS Team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+services:
+  # RustFS main service
+  rustfs:
+    security_opt:
+      - "no-new-privileges:true"
+    image: rustfs/rustfs:1.0.0-alpha.90
+    container_name: rustfs-server
+    env_file:
+      - ~/docker-homelab/.rustfs.env
+    # ports:
+    #   - "9000:9000" # S3 API port
+    #   - "9001:9001" # Console port
+    environment:
+      - RUSTFS_VOLUMES=/data/rustfs{0..3} # Define 4 storage volumes
+      # - RUSTFS_TLS_PATH=/opt/tls
+      # - RUSTFS_OBS_ENDPOINT=http://otel-collector:4318
+    volumes:
+      - $APPDIR/rustfs/deploy/data/pro:/data
+      - $APPDIR/rustfs/deploy/logs:/app/logs
+      # - $APPDIR/rustfs/deploy/data/certs/:/opt/tls # TLS configuration, you should create tls directory and put your tls files in it and then specify the path here
+    networks:
+      - backend
+      - frontend
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          "curl -f http://127.0.0.1:9000/health && curl -f http://127.0.0.1:9001/rustfs/console/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      # Router: Main App
+      - "traefik.http.routers.rustfs.rule=Host(`files.$DOMAINNAME_J`)"
+      - "traefik.http.routers.rustfs.entrypoints=websecure"
+      - "traefik.http.routers.rustfs.tls=true"
+      - "traefik.http.routers.rustfs.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.rustfs.service=rustfs"
+      # Service: Main App
+      - "traefik.http.services.rustfs.loadbalancer.server.port=9000"
+      # Router: Console (subdomain)
+      - "traefik.http.routers.rustfs-console.rule=Host(`console.files.$DOMAINNAME_J`)"
+      - "traefik.http.routers.rustfs-console.entrypoints=websecure"
+      - "traefik.http.routers.rustfs-console.tls=true"
+      - "traefik.http.routers.rustfs-console.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.rustfs-console.service=rustfs-console"
+      # Service: Console
+      - "traefik.http.services.rustfs-console.loadbalancer.server.port=9001"
+      # Middleware: Disable buffering / large uploads
+      - "traefik.http.middlewares.rustfs-buffering.buffering.maxRequestBodyBytes=0"
+      - "traefik.http.middlewares.rustfs-buffering.buffering.memRequestBodyBytes=0"
+      - "traefik.http.middlewares.rustfs-buffering.buffering.maxResponseBodyBytes=0"
+      # Apply middleware
+      - "traefik.http.routers.rustfs.middlewares=middlewares-ipwhitelist@file,rustfs-buffering@docker"
+      - "traefik.http.routers.rustfs-console.middlewares=rustfs-buffering@docker"
+  #   depends_on:
+  #     otel-collector:
+  #       condition: service_started
+  #       required: false
+
+  # # --- Observability Stack ---
+
+  # tempo-init:
+  #   image: busybox:latest
+  #   command: [ "sh", "-c", "chown -R 10001:10001 /var/tempo" ]
+  #   volumes:
+  #     - tempo_data:/var/tempo
+  #   user: root
+  #   networks:
+  #     - rustfs-network
+  #   restart: "no"
+  #   profiles:
+  #     - observability
+
+  # tempo:
+  #   image: grafana/tempo:latest
+  #   user: "10001"
+  #   command: [ "-config.file=/etc/tempo.yaml" ]
+  #   volumes:
+  #     - $APPDIR/observability/tempo.yaml:/etc/tempo.yaml:ro
+  #     - tempo_data:/var/tempo
+  #   ports:
+  #     - "3200:3200" # tempo
+  #     - "4317"      # otlp grpc
+  #     - "4318"      # otlp http
+  #   restart: unless-stopped
+  #   networks:
+  #     - rustfs-network
+  #   profiles:
+  #     - observability
+
+  # otel-collector:
+  #   image: otel/opentelemetry-collector-contrib:latest
+  #   container_name: otel-collector
+  #   command:
+  #     - --config=/etc/otelcol-contrib/otel-collector.yml
+  #   volumes:
+  #     - $APPDIR/observability/otel-collector-config.yaml:/etc/otelcol-contrib/otel-collector.yml:ro
+  #   # ports:
+  #   #   - "1888:1888"   # pprof
+  #   #   - "8888:8888"   # Prometheus metrics for Collector
+  #   #   - "8889:8889"   # Prometheus metrics for application indicators
+  #   #   - "13133:13133" # health check
+  #   #   - "4317:4317"   # OTLP gRPC
+  #   #   - "4318:4318"   # OTLP HTTP
+  #   #   - "55679:55679" # zpages
+  #   networks:
+  #     - backend
+  #   restart: unless-stopped
+  #   profiles:
+  #     - observability
+  #   depends_on:
+  #     - tempo
+  #     - jaeger
+  #     - prometheus
+  #     - loki
+
+  # jaeger:
+  #   image: jaegertracing/jaeger:latest
+  #   container_name: jaeger
+  #   environment:
+  #     - TZ=Asia/Shanghai
+  #     - SPAN_STORAGE_TYPE=badger
+  #     - BADGER_EPHEMERAL=false
+  #     - BADGER_DIRECTORY_VALUE=/badger/data
+  #     - BADGER_DIRECTORY_KEY=/badger/key
+  #     - COLLECTOR_OTLP_ENABLED=true
+  #   volumes:
+  #     - jaeger_data:/badger
+  #   ports:
+  #     - "16686:16686" # Web UI
+  #     - "14269:14269" # Admin/Metrics
+  #   networks:
+  #     - rustfs-network
+  #   restart: unless-stopped
+  #   profiles:
+  #     - observability
+
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - $APPDIR/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #   command:
+  #     - "--config.file=/etc/prometheus/prometheus.yml"
+  #     - "--storage.tsdb.path=/prometheus"
+  #     - "--storage.tsdb.retention.time=30d"
+  #     - "--web.enable-lifecycle"
+  #     - "--web.enable-otlp-receiver"
+  #     - "--web.enable-remote-write-receiver"
+  #   networks:
+  #     - rustfs-network
+  #   restart: unless-stopped
+  #   profiles:
+  #     - observability
+
+  # loki:
+  #   image: grafana/loki:latest
+  #   container_name: loki
+  #   environment:
+  #     - TZ=Asia/Shanghai
+  #   volumes:
+  #     - $APPDIR/observability/loki.yaml:/etc/loki/local-config.yaml:ro
+  #     - loki_data:/loki
+  #   ports:
+  #     - "3100:3100"
+  #   command: -config.file=/etc/loki/local-config.yaml
+  #   networks:
+  #     - rustfs-network
+  #   restart: unless-stopped
+  #   profiles:
+  #     - observability
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #     - GF_INSTALL_PLUGINS=grafana-pyroscope-datasource
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #     - $APPDIR/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+  #     - $APPDIR/observability/grafana/dashboards:/etc/grafana/dashboards:ro
+  #   networks:
+  #     - rustfs-network
+  #   restart: unless-stopped
+  #   profiles:
+  #     - observability
+  #   depends_on:
+  #     - prometheus
+  #     - tempo
+  #     - loki
+
+  # # NGINX reverse proxy (optional)
+  # nginx:
+  #   security_opt:
+  #     - "no-new-privileges:true"
+  #   image: nginx:alpine
+  #   container_name: nginx-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./.docker/nginx/ssl:/etc/nginx/ssl:ro
+  #   tmpfs:
+  #     - /var/run
+  #     - /var/cache/nginx
+  #     - /var/log/nginx
+  #   networks:
+  #     - rustfs-network
+  #   restart: unless-stopped
+  #   read_only: true
+  #   profiles:
+  #     - proxy
+  #   depends_on:
+  #     - rustfs
+
+# volumes:
+#   rustfs_data_0:
+#     driver: local
+#   rustfs_data_1:
+#     driver: local
+#   rustfs_data_2:
+#     driver: local
+#   rustfs_data_3:
+#     driver: local
+#   rustfs_dev_data:
+#     driver: local
+#   prometheus_data:
+#     driver: local
+#   grafana_data:
+#     driver: local
+#   tempo_data:
+#     driver: local
+#   loki_data:
+#     driver: local
+#   jaeger_data:
+#     driver: local
+#   logs:
+#     driver: local
+#   cargo_registry:
+#     driver: local

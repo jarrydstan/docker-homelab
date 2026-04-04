@@ -41,53 +41,53 @@ secrets:
 include:
   # CORE
   - compose/$HOSTNAME/adguard.yaml
-  # - compose/$HOSTNAME/audiobookshelf.yaml
   - compose/$HOSTNAME/certbot.yaml
   - compose/$HOSTNAME/crowdsec.yaml
   - compose/$HOSTNAME/cwa.yaml
   - compose/$HOSTNAME/deunhealth.yaml
   - compose/$HOSTNAME/dozzle.yaml
-  # - compose/$HOSTNAME/gitlab.yaml
-  # - compose/$HOSTNAME/habitica.yaml
   - compose/$HOSTNAME/homepage.yaml
   - compose/$HOSTNAME/litkeeper.yaml
   - compose/$HOSTNAME/paperless-ngx.yaml
   - compose/$HOSTNAME/paperless-ai.yaml
-  # - compose/$HOSTNAME/portainer.yaml
   - compose/$HOSTNAME/protonmail-bridge.yaml
+  - compose/$HOSTNAME/rustfs.yaml
   - compose/$HOSTNAME/socket-proxy.yaml
   - compose/$HOSTNAME/traefik.yaml
   - compose/$HOSTNAME/unifi-bouncer.yaml
-  # - compose/$HOSTNAME/traefik-bouncer.yaml
-  # - compose/$HOSTNAME/unifi.yaml
   # DOWNLOADERS
   - compose/$HOSTNAME/qbittorrent.yaml
   - compose/$HOSTNAME/sabnzbd.yaml
   # ARRS
   - compose/$HOSTNAME/bazarr.yaml
-  - compose/$HOSTNAME/cleanuperr.yaml
   - compose/$HOSTNAME/flaresolverr.yaml
   - compose/$HOSTNAME/jellyseer.yaml
   - compose/$HOSTNAME/prowlarr.yaml
   - compose/$HOSTNAME/qbitrr.yaml
   - compose/$HOSTNAME/radarr.yaml
-  - compose/$HOSTNAME/huntarr.yaml
-  # - compose/$HOSTNAME/readarr.yaml
   - compose/$HOSTNAME/recyclarr.yaml
   - compose/$HOSTNAME/sonarr.yaml
   # MONITORING
   - compose/$HOSTNAME/beszel.yaml
-  # - compose/$HOSTNAME/cadvisor.yaml
-  # - compose/$HOSTNAME/exportarr.yaml
-  - compose/$HOSTNAME/glance.yaml
-  # - compose/$HOSTNAME/grafana.yaml
-  # - compose/$HOSTNAME/nodeexporter.yaml
-  # - compose/$HOSTNAME/prometheus.yaml
+  - compose/$HOSTNAME/dynacat.yaml
   # MAINTENANCE
   - compose/$HOSTNAME/docker-gc.yaml
   # NETWORK
   - compose/$HOSTNAME/gluetun.yaml
   # WEB
   - compose/$HOSTNAME/webapp.yaml
-  # - compose/$HOSTNAME/mealie.yaml
   - compose/$HOSTNAME/mindwtr.yaml
+  - compose/$HOSTNAME/kaneo.yaml
+  ####### ARCHIVE ########
+  # - compose/$HOSTNAME/grafana.yaml
+  # - compose/$HOSTNAME/nodeexporter.yaml
+  # - compose/$HOSTNAME/prometheus.yaml
+  # - compose/$HOSTNAME/mealie.yaml
+  # - compose/$HOSTNAME/audiobookshelf.yaml
+  # - compose/$HOSTNAME/gitlab.yaml
+  # - compose/$HOSTNAME/habitica.yaml
+  # - compose/$HOSTNAME/portainer.yaml
+  # - compose/$HOSTNAME/unifi.yaml
+  # - compose/$HOSTNAME/readarr.yaml
+  # - compose/$HOSTNAME/cadvisor.yaml
+  # - compose/$HOSTNAME/exportarr.yaml
