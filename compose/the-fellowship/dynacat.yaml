@@ -1,0 +1,25 @@
+services:
+  dynacat:
+    container_name: dynacat
+    image: panonim/dynacat:2.0.1
+    dns:
+      - 192.168.12.120
+    networks:
+      - frontend
+    volumes:
+      - $APPDIR/dynacat/config:/app/config
+      - $APPDIR/dynacat/assets:/app/assets
+      # Optionally, also mount docker socket if you want to use the docker containers widget
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - 8080:8080
+    env_file: $DOCKERDIR/.env
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dynacat-rtr.rule=Host(`dash.$DOMAINNAME_J`)"
+      - "traefik.http.routers.dynacat-rtr.entrypoints=websecure"
+      - "traefik.http.routers.dynacat-rtr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dynacat-rtr.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.dynacat-rtr.service=dynacat-svc"
+      - "traefik.http.services.dynacat-svc.loadbalancer.server.port=8080"
