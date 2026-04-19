@@ -1,7 +1,7 @@
 services:
   broker:
     container_name: paperless-broker
-    image: docker.io/library/redis:7
+    image: docker.io/library/redis:8
     restart: unless-stopped
     networks:
       - backend
