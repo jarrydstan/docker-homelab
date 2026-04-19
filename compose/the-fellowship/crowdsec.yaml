@@ -1,7 +1,7 @@
 services:
   # CrowdSec - Open-source & collaborative security IPS
   crowdsec:
-    image: crowdsecurity/crowdsec:v1.7.6-debian
+    image: crowdsecurity/crowdsec:v1.7.7-debian
     container_name: crowdsec
     security_opt:
       - no-new-privileges:true
