@@ -37,6 +37,9 @@ secrets:
     file: $DOCKERDIR/.secrets/basic_auth_credentials
   cloudflare:
     file: $DOCKERDIR/.secrets/cloudflare
+volumes:
+  syslog:
+  logs:
 
 include:
   # CORE

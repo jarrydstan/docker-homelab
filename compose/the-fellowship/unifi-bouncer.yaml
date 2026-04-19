@@ -1,15 +1,37 @@
 services:
-  unifi-bouncer:
-    image: ghcr.io/teifun2/cs-unifi-bouncer:v1.2.2
+  syslog:
+    image: linuxserver/syslog-ng:4.10.2@sha256:104882bd6a3d13e9a60719cb418ab1a30dc678ced22d142d11e7cd2cec35dff0
+    container_name: syslog
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    ports:
+      - ${SYSLOG_PORT}:5514/udp
+      - ${SYSLOG_PORT}:6601/tcp
+    volumes:
+      - syslog:/config
+      - logs:/var/log
     networks:
-      - backend
+      frontend:
+        aliases:
+          - syslog
+  unifi-bouncer:
+    image: ghcr.io/teifun2/cs-unifi-bouncer:v1.4.0
+    networks:
+      - frontend
     container_name: bouncer-unifi
     environment:
       CROWDSEC_BOUNCER_API_KEY: $UNIFI_CROWDSEC_API_KEY # docker exec crowdsec cscli bouncers add unifi-bouncer
       CROWDSEC_URL: "http://crowdsec:8080/"
       UNIFI_HOST: "https://unifi.$DOMAINNAME_J"
-      UNIFI_USER: $UNIFI_API_USER
-      UNIFI_PASS: $UNIFI_API_KEY
+      # UNIFI_USER: $UNIFI_API_USER
+      UNIFI_API_KEY: $UNIFI_API_KEY
       # Only use this if your unifi instance does not have a proper certificate.
       UNIFI_SKIP_TLS_VERIFY: "true"
     restart: unless-stopped

@@ -26,5 +26,6 @@ services:
       - $DOCKERDIR/logs/:/logs/:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/log:/var/log/host:ro
+      - logs:/var/log/syslog:ro
       - $DOCKERDIR/appdata/crowdsec/data:/var/lib/crowdsec/data
       - $DOCKERDIR/appdata/crowdsec/config:/etc/crowdsec
