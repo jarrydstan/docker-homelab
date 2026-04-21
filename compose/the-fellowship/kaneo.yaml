@@ -44,7 +44,7 @@ services:
       - "traefik.http.services.kaneo-api-svc.loadBalancer.server.port=1337"
 
   kaneo_web:
-    image: ghcr.io/usekaneo/web:2.5.2
+    image: ghcr.io/usekaneo/web:2.6.9
     container_name: kaneo_web
     networks:
       - backend
