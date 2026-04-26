@@ -1,6 +1,6 @@
 services:
   recyclarr:
-    image: ghcr.io/recyclarr/recyclarr:7.5.2
+    image: ghcr.io/recyclarr/recyclarr:8.6.0
     container_name: recyclarr
     security_opt:
       - no-new-privileges:true
