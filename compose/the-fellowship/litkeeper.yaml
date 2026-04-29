@@ -1,6 +1,6 @@
 services:
   litkeeper:
-    image: ghcr.io/redwoodstory/litkeeper:2.1.4
+    image: ghcr.io/redwoodstory/litkeeper:2.2.3
     restart: unless-stopped
     container_name: litkeeper
     networks:
