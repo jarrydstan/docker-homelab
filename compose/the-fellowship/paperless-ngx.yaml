@@ -71,7 +71,7 @@ services:
 
   gotenberg:
     container_name: paperless-gotenberg
-    image: docker.io/gotenberg/gotenberg:8.7
+    image: docker.io/gotenberg/gotenberg:8.32
     restart: unless-stopped
     networks:
       - backend
