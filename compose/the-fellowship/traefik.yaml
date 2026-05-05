@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:3.6.12
+    image: traefik:v3.7.0
     logging:
       driver: json-file
       options:
