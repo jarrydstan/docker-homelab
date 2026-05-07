@@ -1,6 +1,6 @@
 services:
   mindwtr-cloud:
-    image: ghcr.io/dongdongbh/mindwtr-cloud:0.7.2
+    image: ghcr.io/dongdongbh/mindwtr-cloud:0.9.1
     container_name: mindwtr-cloud
     hostname: mindwtr-cloud
     restart: always
