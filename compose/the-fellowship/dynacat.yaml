@@ -1,7 +1,7 @@
 services:
   dynacat:
     container_name: dynacat
-    image: panonim/dynacat:2.0.1
+    image: panonim/dynacat:2.2.3
     dns:
       - 192.168.12.120
     networks:
