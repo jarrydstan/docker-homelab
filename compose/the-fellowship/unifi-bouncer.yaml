@@ -1,6 +1,6 @@
 services:
   syslog:
-    image: linuxserver/syslog-ng:4.10.2@sha256:104882bd6a3d13e9a60719cb418ab1a30dc678ced22d142d11e7cd2cec35dff0
+    image: linuxserver/syslog-ng:4.10.2@sha256:0d164e438d1f9ee4b610dfd287323bb3cdb0922f04fcaea3106fc9de7eea19d6
     container_name: syslog
     deploy:
       restart_policy:
