@@ -30,7 +30,7 @@ services:
       - "traefik.http.services.mindwtr-svc.loadBalancer.server.port=8787"
 
   mindwtr-app:
-    image: ghcr.io/dongdongbh/mindwtr-app:0.9.3
+    image: ghcr.io/dongdongbh/mindwtr-app:0.9.10
     container_name: mindwtr-app
     hostname: mindwtr-app
     restart: always
