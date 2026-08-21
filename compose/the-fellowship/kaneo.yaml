@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
   kaneo:
-    image: ghcr.io/usekaneo/kaneo:2.7.2
+    image: ghcr.io/usekaneo/kaneo:2.22.0
     container_name: kaneo
     networks:
       - backend
