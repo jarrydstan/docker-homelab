@@ -1,0 +1,9 @@
+# Syntax/structure checks only; style is left alone.
+extends: relaxed
+rules:
+  line-length: disable
+  trailing-spaces: disable
+  empty-lines: disable
+  comments-indentation: disable
+  indentation: disable
+  truthy: disable

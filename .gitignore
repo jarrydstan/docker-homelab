@@ -5,3 +5,5 @@ appdata/
 logs/
 appdata
 .cert/
+!ci/*.env
+.ci-root*/

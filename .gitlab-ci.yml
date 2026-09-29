@@ -1,0 +1,71 @@
+# Gate for Renovate (and human) merge requests. Renovate only auto-merges once
+# this pipeline passes, so every job here must fail on a change that would not run.
+#   validate: yaml syntax, renovate config, full compose render with dummy env
+#   images:   every image an MR adds exists for linux/amd64
+#   smoke:    changed services start in an isolated docker-in-docker and turn healthy
+# Helper logic lives in ci/ci.py; run it locally with e.g. `python3 ci/ci.py smoke sonarr`.
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
+
+stages: [validate, images, smoke]
+
+variables:
+  GIT_DEPTH: 0 # change detection diffs against the MR's merge base
+
+.mr-only:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+.docker-cli:
+  image: docker:29.8.1-cli
+  before_script:
+    - apk add --no-cache python3 git >/dev/null
+    - git config --global --add safe.directory "$CI_PROJECT_DIR"
+
+yamllint:
+  stage: validate
+  image: python:3.13.15-alpine
+  script:
+    - pip install -q --root-user-action=ignore yamllint==1.37.1
+    - yamllint -s docker-compose-mstr.yaml compose/ .gitlab-ci.yml .yamllint
+
+renovate-config:
+  stage: validate
+  image:
+    name: ghcr.io/renovatebot/renovate:44.117.2
+    entrypoint: [""]
+  script:
+    - renovate-config-validator --strict renovate.json
+
+compose-config:
+  stage: validate
+  extends: .docker-cli
+  script:
+    - python3 ci/ci.py render
+
+images-exist:
+  stage: images
+  extends: [.docker-cli, .mr-only]
+  script:
+    - apk add --no-cache skopeo >/dev/null
+    - python3 ci/ci.py changed-images --base "$CI_MERGE_REQUEST_DIFF_BASE_SHA" > images.txt
+    - cat images.txt
+    - sh ci/check-images.sh images.txt
+
+smoke:
+  stage: smoke
+  extends: [.docker-cli, .mr-only]
+  services:
+    - name: docker:29.8.1-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: /certs/client
+  timeout: 30m
+  script:
+    - python3 ci/ci.py smoke --base "$CI_MERGE_REQUEST_DIFF_BASE_SHA"

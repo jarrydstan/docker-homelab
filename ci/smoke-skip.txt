@@ -1,0 +1,12 @@
+# Services the smoke test cannot start without real credentials, hardware or
+# config that lives outside the repo. MRs touching them are still gated by
+# the validate and images jobs. One service name per line; text after # is ignored.
+gluetun           # needs real ProtonVPN credentials
+certbot           # one-shot; needs a Cloudflare token
+traefik           # static config lives in appdata, not in this repo
+protonmail-bridge # needs an interactively initialised vault
+adguard           # without its config only the setup wizard runs (DNS probe fails)
+dynacat           # refuses to start without its config file
+deunhealth        # watches the whole docker daemon; not meaningful in isolation
+# Also skipped automatically: services with build:, network_mode host/service:,
+# and anything depending on a skipped service (e.g. qbittorrent, qbitrr).
