@@ -7,7 +7,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    image: tecnativa/docker-socket-proxy:v0.4.2
+    image: tecnativa/docker-socket-proxy:v0.5.0
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
