@@ -73,8 +73,6 @@ include:
   # MONITORING
   - compose/$HOSTNAME/beszel.yaml
   - compose/$HOSTNAME/dynacat.yaml
-  # MAINTENANCE
-  - compose/$HOSTNAME/docker-gc.yaml
   # NETWORK
   - compose/$HOSTNAME/gluetun.yaml
   # WEB
@@ -95,3 +93,4 @@ include:
   # - compose/$HOSTNAME/readarr.yaml
   # - compose/$HOSTNAME/cadvisor.yaml
   # - compose/$HOSTNAME/exportarr.yaml
+  # - compose/$HOSTNAME/docker-gc.yaml # replaced by image prune in ~/cron.sh
