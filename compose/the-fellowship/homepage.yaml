@@ -1,6 +1,6 @@
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage:v1.13.1
+    image: ghcr.io/gethomepage/homepage:v2.4.0
     container_name: homepage
     security_opt:
       - no-new-privileges:true
@@ -17,6 +17,7 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: 999
+      HOMEPAGE_ALLOWED_HOSTS: home.$DOMAINNAME_NA
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.homepage-https.entrypoints=websecure"
