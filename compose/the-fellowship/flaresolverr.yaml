@@ -1,6 +1,6 @@
 services:
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.4.6
+    image: flaresolverr/flaresolverr:v3.5.2
     container_name: flaresolverr
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8191/health"]
