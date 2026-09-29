@@ -6,5 +6,67 @@
   "docker-compose": {
     "managerFilePatterns": ["compose/the-fellowship/*.yaml"],
     "ignorePaths": ["docker-compose-mstr.yaml"]
-  }
+  },
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "platformAutomerge": true,
+  "packageRules": [
+    {
+      "description": "Auto-merge non-major updates once the MR pipeline passes",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "automerge": true
+    },
+    {
+      "description": "Majors need a human to read the changelog",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["needs-review", "major"]
+    },
+    {
+      "description": "In 0.x, minor bumps are breaking by semver convention",
+      "matchCurrentVersion": "/^v?0\\./",
+      "matchUpdateTypes": ["minor"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    },
+    {
+      "description": "Stateful apps whose minors have shipped breaking env/DB changes (kaneo 2.26, paperless 3.x)",
+      "matchPackageNames": ["ghcr.io/usekaneo/kaneo", "ghcr.io/paperless-ngx/paperless-ngx", "rustfs/rustfs"],
+      "matchUpdateTypes": ["minor"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    },
+    {
+      "description": "linuxserver tags: treat the -lsNNN suffix as a build revision, not a compatibility suffix",
+      "matchPackageNames": ["lscr.io/linuxserver/**"],
+      "matchCurrentValue": "/-ls\\d+$/",
+      "versioning": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:\\.(?<build>\\d+))?-ls(?<revision>\\d+)$"
+    },
+    {
+      "description": "qbitrr tags are vX.Y.Z-N where N is a rebuild counter",
+      "matchPackageNames": ["feramance/qbitrr"],
+      "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?$"
+    },
+    {
+      "description": "qbittorrent 14.x/20.x tags are an ancient scheme, not newer releases",
+      "matchPackageNames": ["lscr.io/linuxserver/qbittorrent"],
+      "allowedVersions": "<10"
+    },
+    {
+      "description": "Tika 4 removes /tika/form endpoints and breaks paperless-ngx (paperless-ngx#13755)",
+      "matchPackageNames": ["docker.io/apache/tika", "apache/tika"],
+      "allowedVersions": "<4"
+    },
+    {
+      "description": "Postgres majors need a dump/restore; do them by hand, then raise this ceiling",
+      "matchPackageNames": ["postgres", "docker.io/library/postgres"],
+      "allowedVersions": "<17"
+    },
+    {
+      "description": "Seerr OIDC preview build: digest bumps only, always reviewed",
+      "matchPackageNames": ["ghcr.io/seerr-team/seerr"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    }
+  ]
 }
