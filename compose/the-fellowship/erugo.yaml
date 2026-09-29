@@ -19,6 +19,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.erugo-https.entrypoints=websecure"
       - "traefik.http.routers.erugo-https.rule=Host(`transfer.$DOMAINNAME_J`)"
-      - "traeifk.http.routers.erugo-https.middlewares=middlewares-traefik-bouncer@file"
+      - "traefik.http.routers.erugo-https.middlewares=middlewares-traefik-bouncer@file"
       - "traefik.http.routers.erugo-https.service=erugo-svc"
       - "traefik.http.services.erugo-svc.loadBalancer.server.port=80"

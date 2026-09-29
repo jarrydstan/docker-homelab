@@ -24,6 +24,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.cwa-https.entrypoints=websecure"
       - "traefik.http.routers.cwa-https.rule=Host(`cwa.$DOMAINNAME_NA`)"
-      - "traeifk.http.routers.cwa-https.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.cwa-https.middlewares=chain-no-auth@file"
       - "traefik.http.routers.cwa-https.service=cwa-svc"
       - "traefik.http.services.cwa-svc.loadBalancer.server.port=8083"

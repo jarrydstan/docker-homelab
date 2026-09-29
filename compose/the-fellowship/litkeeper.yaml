@@ -22,6 +22,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.litkeeper-https.entrypoints=websecure"
       - "traefik.http.routers.litkeeper-https.rule=Host(`litkeeper.$DOMAINNAME_NA`)"
-      - "traeifk.http.routers.litkeeper-https.middlewares=chain-lan-only@file"
+      - "traefik.http.routers.litkeeper-https.middlewares=chain-lan-only@file"
       - "traefik.http.routers.litkeeper-https.service=litkeeper-svc"
       - "traefik.http.services.litkeeper-svc.loadBalancer.server.port=5000"
