@@ -7,7 +7,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    image: docker.io/library/redis:7
+    image: docker.io/library/redis:7.4.11
     restart: unless-stopped
     networks:
       - backend
@@ -22,7 +22,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: docker.io/library/postgres:16
+    image: docker.io/library/postgres:16.15
     restart: unless-stopped
     networks:
       - backend
