@@ -1,6 +1,6 @@
 services:
   adguard:
-    image: adguard/adguardhome:v0.107.74
+    image: adguard/adguardhome:v0.107.79
     container_name: adguard
     healthcheck:
       test: ["CMD", "nslookup", "healthcheck.adguardhome.test", "127.0.0.1"]
