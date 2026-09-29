@@ -1,7 +1,7 @@
 services:
   # Radarr - Movie management
   radarr:
-    image: lscr.io/linuxserver/radarr:6.0.4.10291-ls296
+    image: lscr.io/linuxserver/radarr:6.4.4.10685-ls318
     container_name: radarr
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:7878/ping"]
