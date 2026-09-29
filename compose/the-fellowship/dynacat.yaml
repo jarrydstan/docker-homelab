@@ -7,7 +7,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: panonim/dynacat:2.2.3
+    image: panonim/dynacat:3.0.0
     dns:
       - 192.168.12.120
     networks:
@@ -20,6 +20,8 @@ services:
     # ports:
     #   - 8080:8080
     env_file: $DOCKERDIR/.env
+    environment:
+      ENABLE_EDITOR: "false" # 3.0 web editor has no auth
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
