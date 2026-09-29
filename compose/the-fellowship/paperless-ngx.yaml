@@ -35,7 +35,7 @@ services:
 
   webserver:
     container_name: paperless-ngx
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.20
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.15
     restart: unless-stopped
     networks:
       - backend
