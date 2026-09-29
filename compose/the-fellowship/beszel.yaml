@@ -1,6 +1,6 @@
 services:
   beszel:
-    image: henrygd/beszel:0.18.7
+    image: henrygd/beszel:0.20.0
     container_name: beszel
     healthcheck:
       test: ["CMD", "/beszel", "health", "--url", "http://localhost:8090"]
@@ -24,7 +24,7 @@ services:
       - "traefik.http.services.beszel-svc.loadbalancer.server.port=8090"
 
   beszel-agent:
-    image: henrygd/beszel-agent:0.18.7
+    image: henrygd/beszel-agent:0.20.0
     container_name: beszel-agent
     healthcheck:
       test: ["CMD", "/agent", "health"]
