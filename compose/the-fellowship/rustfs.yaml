@@ -17,7 +17,7 @@ services:
   rustfs:
     security_opt:
       - "no-new-privileges:true"
-    image: rustfs/rustfs:1.0.0-alpha.90
+    image: rustfs/rustfs:1.0.0
     container_name: rustfs-server
     env_file:
       - $DOCKERDIR/.rustfs.env
@@ -25,11 +25,11 @@ services:
     #   - "9000:9000" # S3 API port
     #   - "9001:9001" # Console port
     environment:
-      - RUSTFS_VOLUMES=/data/rustfs{0..3} # Define 4 storage volumes
+      - RUSTFS_VOLUMES=/data # single drive; ZFS provides redundancy (1.0 rejects multi-drive on one device)
       # - RUSTFS_TLS_PATH=/opt/tls
       # - RUSTFS_OBS_ENDPOINT=http://otel-collector:4318
     volumes:
-      - $APPDIR/rustfs/deploy/data/pro:/data
+      - $APPDIR/rustfs/deploy/data/v1:/data # pre-1.0 4-drive layout kept in data/pro for rollback
       - $APPDIR/rustfs/deploy/logs:/app/logs
       # - $APPDIR/rustfs/deploy/data/certs/:/opt/tls # TLS configuration, you should create tls directory and put your tls files in it and then specify the path here
     networks:
