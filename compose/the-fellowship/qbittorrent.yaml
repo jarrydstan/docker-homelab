@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:20.04.1
+    image: lscr.io/linuxserver/qbittorrent:5.2.1
     container_name: qbittorrent
     restart: unless-stopped
     network_mode: "service:gluetun"
@@ -15,7 +15,7 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      UMASK_SET: 002
+      UMASK: 002
     depends_on:
       gluetun:
         condition: service_healthy

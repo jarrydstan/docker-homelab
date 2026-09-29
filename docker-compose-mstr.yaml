@@ -57,7 +57,7 @@ include:
   - compose/$HOSTNAME/rustfs.yaml
   - compose/$HOSTNAME/socket-proxy.yaml
   - compose/$HOSTNAME/traefik.yaml
-  - compose/$HOSTNAME/unifi-bouncer.yaml
+  # - compose/$HOSTNAME/unifi-bouncer.yaml
   # DOWNLOADERS
   - compose/$HOSTNAME/qbittorrent.yaml
   - compose/$HOSTNAME/sabnzbd.yaml
@@ -81,6 +81,7 @@ include:
   - compose/$HOSTNAME/webapp.yaml
   - compose/$HOSTNAME/mindwtr.yaml
   - compose/$HOSTNAME/kaneo.yaml
+  - compose/$HOSTNAME/erugo.yaml
   ####### ARCHIVE ########
   # - compose/$HOSTNAME/grafana.yaml
   # - compose/$HOSTNAME/nodeexporter.yaml

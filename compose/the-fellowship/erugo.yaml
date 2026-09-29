@@ -1,0 +1,18 @@
+services:
+  erugo:
+    image: wardy784/erugo:0.2.15
+    container_name: erugo
+    restart: unless-stopped
+    networks:
+      - frontend
+    volumes:
+      - $APPDIR/ergo/storage:/var/www/html/storage # Use a dedicated folder
+    # ports:
+    #   - "9998:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.erugo-https.entrypoints=websecure"
+      - "traefik.http.routers.erugo-https.rule=Host(`transfer.$DOMAINNAME_J`)"
+      - "traeifk.http.routers.erugo-https.middlewares=middlewares-traefik-bouncer@file"
+      - "traefik.http.routers.erugo-https.service=erugo-svc"
+      - "traefik.http.services.erugo-svc.loadBalancer.server.port=80"

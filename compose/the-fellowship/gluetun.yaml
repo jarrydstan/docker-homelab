@@ -1,6 +1,6 @@
 services:
   gluetun:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:latest
     container_name: gluetun
     security_opt:
       - no-new-privileges:true
@@ -25,8 +25,9 @@ services:
       VPN_TYPE: openvpn
       OPENVPN_USER: $PROTONVPN_USER
       OPENVPN_PASSWORD: $PROTONVPN_PASS
-      SERVER_COUNTRIES: Australia
+      SERVER_COUNTRIES: Netherlands
       VPN_PORT_FORWARDING: on
+      PORT_FORWARD_ONLY: on
     labels:
       - "traefik.enable=true"
       # HTTP Routers

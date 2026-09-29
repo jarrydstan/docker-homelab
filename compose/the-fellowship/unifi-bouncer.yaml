@@ -35,3 +35,13 @@ services:
       # Only use this if your unifi instance does not have a proper certificate.
       UNIFI_SKIP_TLS_VERIFY: "true"
     restart: unless-stopped
+  unifi-sidecar:
+    image: ghcr.io/wolffcatskyy/crowdsec-sidecar:v2.4.0
+    networks:
+      - frontend
+    container_name: unifi_sidecar
+    ports:
+      - 8084:8084
+    restart: unless-stopped
+    volumes:
+      - $APPDIR/unifi-bouncer/config.yaml:/etc/crowdsec-sidecar/config.yaml:ro
