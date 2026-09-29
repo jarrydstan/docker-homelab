@@ -3,6 +3,12 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:2.3.0.5236-ls140
     container_name: prowlarr
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9696/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     security_opt:
       - no-new-privileges:true
     restart: "unless-stopped"

@@ -1,6 +1,12 @@
 services:
   dynacat:
     container_name: dynacat
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     image: panonim/dynacat:2.2.3
     dns:
       - 192.168.12.120

@@ -2,6 +2,12 @@ services:
   protonmail-bridge:
     image: shenxn/protonmail-bridge:3.19.0-1
     container_name: protonmail-bridge
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/143"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     restart: unless-stopped
     # entrypoint:
     #   ["bash", "/protonmail/entrypoint.sh && sleep 60 && status"]

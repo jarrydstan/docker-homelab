@@ -2,6 +2,12 @@ services:
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:8.6.0
     container_name: recyclarr
+    healthcheck:
+      test: ["CMD", "pgrep", "supercronic"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     security_opt:
       - no-new-privileges:true
     user: $PUID:$PGID

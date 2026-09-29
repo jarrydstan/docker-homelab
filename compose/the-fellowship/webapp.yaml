@@ -1,6 +1,12 @@
 services:
   webapp:
     container_name: webapp
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://$$(hostname):3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     build:
       context: $DOCKERDIR/appdata/www/web/prod/
       dockerfile: prod.Dockerfile

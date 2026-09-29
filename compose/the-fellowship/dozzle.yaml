@@ -2,6 +2,12 @@ services:
   dozzle:
     image: amir20/dozzle:v10.5.3
     container_name: dozzle
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     depends_on:
       socket-proxy:
         condition: service_started

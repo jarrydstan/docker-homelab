@@ -1,6 +1,12 @@
 services:
   broker:
     container_name: paperless-broker
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     image: docker.io/library/redis:7
     restart: unless-stopped
     networks:
@@ -10,6 +16,12 @@ services:
 
   db:
     container_name: paperless-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     image: docker.io/library/postgres:16
     restart: unless-stopped
     networks:
@@ -71,6 +83,12 @@ services:
 
   gotenberg:
     container_name: paperless-gotenberg
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     image: docker.io/gotenberg/gotenberg:8.7
     restart: unless-stopped
     networks:
@@ -85,6 +103,12 @@ services:
 
   tika:
     container_name: paperless-tika
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9998"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     image: docker.io/apache/tika:3.3.0.0
     restart: unless-stopped
     networks:

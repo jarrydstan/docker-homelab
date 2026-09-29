@@ -2,6 +2,12 @@ services:
   beszel:
     image: henrygd/beszel:0.18.7
     container_name: beszel
+    healthcheck:
+      test: ["CMD", "/beszel", "health", "--url", "http://localhost:8090"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - frontend
     restart: unless-stopped
@@ -20,6 +26,12 @@ services:
   beszel-agent:
     image: henrygd/beszel-agent:0.18.7
     container_name: beszel-agent
+    healthcheck:
+      test: ["CMD", "/agent", "health"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
     network_mode: host
     volumes:

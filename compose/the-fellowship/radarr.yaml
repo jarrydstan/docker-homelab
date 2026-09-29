@@ -3,6 +3,12 @@ services:
   radarr:
     image: lscr.io/linuxserver/radarr:6.0.4.10291-ls296
     container_name: radarr
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:7878/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     security_opt:
       - no-new-privileges:true
     restart: "unless-stopped"
