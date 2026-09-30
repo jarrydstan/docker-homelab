@@ -1,0 +1,7 @@
+{
+    "yaml.disableSchemaDetection": [],
+    "yaml.schemas": {
+        "file:///Users/jarrydstanbrook/.vscode-oss/extensions/atlassian.atlascode-3.0.14-universal/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml",
+        "https://www.schemastore.org/traefik-v2.json": "file:///home/jarryd/docker-homelab/appdata/traefik/rules/**.yaml"
+    }
+}
