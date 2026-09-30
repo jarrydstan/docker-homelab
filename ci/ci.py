@@ -23,6 +23,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MASTER = "docker-compose-mstr.yaml"
 SECRETS = ["cf_dns_api_tokens", "pgsql_root_password", "basic_auth_credentials", "cloudflare"]
 VAR_RE = re.compile(r"(?<!\$)\$\{?([A-Za-z_][A-Za-z0-9_]*)(:?[-?])?")
+STABLE_SECS = 30  # how long a service without a healthcheck must stay running
 IMAGE_RE = re.compile(r"^\+\s*image:\s*[\"']?([^\"'\s#]+)", re.M)
 
 
@@ -43,7 +44,21 @@ def compose_files(repo):
     return [MASTER] + [f"compose/the-fellowship/{f}" for f in inc]
 
 
-def prepare(repo, root):
+def extra_compose_files(base):
+    """Compose files changed since base that the master file does not include.
+
+    Archived/disabled stacks (e.g. unifi-bouncer) are not part of the deployed
+    render, but a Renovate MR can still bump them; render them alongside the
+    master file so their services are validated and smoke-tested too.
+    """
+    changed = run(["git", "-C", REPO, "diff", "--name-only", f"{base}...HEAD", "--",
+                   "compose/the-fellowship/*.yaml", "compose/the-fellowship/*.yml"],
+                  capture_output=True).stdout.split()
+    included = set(compose_files(REPO))
+    return sorted(f for f in changed if f not in included and os.path.exists(os.path.join(REPO, f)))
+
+
+def prepare(repo, root, extra=()):
     """Create env file, dummy secrets and env_files for rendering `repo`."""
     os.makedirs(os.path.join(root, ".secrets"), exist_ok=True)
     for d in ("appdata", "data"):
@@ -62,10 +77,11 @@ def prepare(repo, root):
             k, _, v = line.partition("=")
             env[k] = v.replace("@ROOT@", root)
     # Any other referenced variable gets a placeholder, unless it has a default.
-    for f in compose_files(repo):
+    for f in compose_files(repo) + [e for e in extra if os.path.exists(os.path.join(repo, e))]:
         for name, op in VAR_RE.findall(open(os.path.join(repo, f)).read()):
             if name not in env and not op:
-                env[name] = "ci-placeholder"
+                # ports must be numeric; ports are stripped before smoke runs anyway
+                env[name] = "65000" if name.endswith("PORT") else "ci-placeholder"
     with open(os.path.join(root, "ci.env"), "w") as f:
         f.writelines(f"{k}={v}\n" for k, v in env.items())
     # dynacat reads $DOCKERDIR/.env as an env_file
@@ -80,10 +96,14 @@ def compose_env():
     return keep
 
 
-def render(repo, root):
-    envfile = prepare(repo, root)
-    out = run(["docker", "compose", "--env-file", envfile, "-f", os.path.join(repo, MASTER),
-               "config", "--format", "json"], capture_output=True, env=compose_env(), check=False)
+def render(repo, root, extra=()):
+    envfile = prepare(repo, root, extra)
+    files = ["-f", os.path.join(repo, MASTER)]
+    for e in extra:
+        if os.path.exists(os.path.join(repo, e)):  # may not exist yet on the base branch
+            files += ["-f", os.path.join(repo, e)]
+    out = run(["docker", "compose", "--env-file", envfile] + files + ["config", "--format", "json"],
+              capture_output=True, env=compose_env(), check=False)
     if out.returncode:
         log(out.stderr)
         sys.exit(f"compose config failed for {repo}")
@@ -101,10 +121,13 @@ def drop_worktree(path):
 
 
 def changed_services(base, root):
-    head = render(REPO, root)["services"]
+    extra = extra_compose_files(base)
+    for e in extra:
+        log(f"note: {e} is not included by {MASTER}; rendering it alongside for this check")
+    head = render(REPO, root, extra)["services"]
     wt = base_worktree(base)
     try:
-        old = render(wt, root + "-base")["services"]
+        old = render(wt, root + "-base", extra)["services"]
     finally:
         drop_worktree(wt)
     # Paths differ between the two renders only by root; normalise before comparing.
@@ -206,7 +229,7 @@ def container_states(project):
 
 def cmd_smoke(a):
     if a.services:
-        targets, services = a.services, render(REPO, a.root)["services"]
+        targets, services = a.services, render(REPO, a.root, a.file)["services"]
     else:
         targets, services = changed_services(a.base, a.root)
     if not targets:
@@ -230,6 +253,7 @@ def cmd_smoke(a):
         if run(dc + ["up", "-d", "--quiet-pull"], env=compose_env(), check=False).returncode:
             sys.exit("FAILED: docker compose up (see error above: missing tag, bad config, ...)")
         deadline = time.time() + a.timeout
+        running_since = {}
         while time.time() < deadline:
             st = container_states(project)
             pending, bad = [], []
@@ -242,6 +266,8 @@ def cmd_smoke(a):
                     (bad if h == "unhealthy" else pending if h != "healthy" else []).append(n)
                 elif s["Status"] != "running":
                     bad.append(n)
+                elif time.time() - running_since.setdefault(n, time.time()) < STABLE_SECS:
+                    pending.append(n)  # no healthcheck: must stay up, not just start
             if bad:
                 log(f"FAILED: {', '.join(bad)}")
                 break
@@ -275,6 +301,8 @@ def main():
     s = sub.add_parser("smoke")
     s.add_argument("--base", default="origin/master")
     s.add_argument("--timeout", type=int, default=420)
+    s.add_argument("--file", action="append", default=[],
+                   help="extra compose file to render (for services not included by the master file)")
     s.add_argument("services", nargs="*", help="test these services instead of the changed ones")
     a = p.parse_args()
     a.root = os.path.abspath(a.root)
