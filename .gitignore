@@ -7,3 +7,4 @@ appdata
 .cert/
 !ci/*.env
 .ci-root*/
+__pycache__/
