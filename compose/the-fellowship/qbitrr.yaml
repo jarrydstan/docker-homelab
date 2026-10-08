@@ -7,7 +7,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    image: feramance/qbitrr:v5.14.5-2
+    image: feramance/qbitrr:v5.14.5-3
     tty: true
     restart: unless-stopped
     networks:
