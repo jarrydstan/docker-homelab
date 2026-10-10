@@ -17,7 +17,7 @@ services:
   rustfs:
     security_opt:
       - "no-new-privileges:true"
-    image: rustfs/rustfs:1.0.0
+    image: rustfs/rustfs:1.0.1
     container_name: rustfs-server
     env_file:
       - $DOCKERDIR/.rustfs.env
