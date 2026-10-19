@@ -90,7 +90,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: docker.io/gotenberg/gotenberg:8.37.0
+    image: docker.io/gotenberg/gotenberg:8.38.1
     restart: unless-stopped
     networks:
       - backend
