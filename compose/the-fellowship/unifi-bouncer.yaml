@@ -1,6 +1,6 @@
 services:
   syslog:
-    image: linuxserver/syslog-ng:4.10.2@sha256:0d164e438d1f9ee4b610dfd287323bb3cdb0922f04fcaea3106fc9de7eea19d6
+    image: linuxserver/syslog-ng:4.11.0@sha256:131b5b5d5e5e002afbacf54acae70cfeec49a69e8c04dd2be3252ec0237b7177
     container_name: syslog
     healthcheck:
       test: ["CMD", "syslog-ng-ctl", "healthcheck", "-c", "/config/syslog-ng.ctl"]
